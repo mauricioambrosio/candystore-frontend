@@ -1,25 +1,69 @@
-import logo from './logo.svg';
+import React, { Component } from "react";
+import { Route, Redirect, Switch, withRouter } from "react-router-dom";
+
+import LoginForm from "./components/loginForm";
+import RegisterForm from "./components/registerForm";
+import Logout from "./components/logout";
+import Products from "./components/products";
+import ProductPage from "./components/productPage";
+import Flavors from "./components/flavors";
+
+import Cart from "./components/cart";
+
+
+import Profile from "./components/profileForm";
+import MyOrders from "./components/myOrders";
+import NotFound from "./components/notFound";
+
+import { Provider } from "react-redux";
+import configureStore from "./store/configureStore";
+
+import NavBar from "./components/navBar";
+
+
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import { PersistGate } from "redux-persist/integration/react";
+
+
+const { store, persistor } = configureStore();
+
+class App extends Component {
+
+  render(){
+    return (
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <React.Fragment>
+            
+            <NavBar/>
+            
+            <div>
+
+              <Switch>
+                <Route path="/products" component={Products} />
+                <Route path="/flavors" component={Flavors} />
+                <Route path="/productpage/:id" component={ProductPage} />
+                <Route path="/register" component={RegisterForm} />
+                <Route path="/login" component={LoginForm} />
+                <Route path="/profile" component={Profile} />
+                <Route path="/myorders" component={MyOrders} />
+                <Route path="/cart" component={Cart}/>
+
+                <Route path="/logout" component={Logout} />
+
+
+                <Redirect exact from="/" to="/products" />
+                <Redirect to="/not-found" />
+
+              </Switch>
+            </div>
+
+          </React.Fragment>
+        </PersistGate>
+      </Provider>
+    );
+  }
 }
 
-export default App;
+export default withRouter(App);
