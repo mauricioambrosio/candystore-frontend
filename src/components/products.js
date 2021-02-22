@@ -40,7 +40,7 @@ class Products extends Component {
         return (
             <Container className="d-flex justify-content-center">
                 <Col>
-                    <h2>Candy Menu</h2>
+                    <h3>Menu</h3>
 
                     <ColoredLine color="grey" height={1} />
 

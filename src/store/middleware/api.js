@@ -25,15 +25,9 @@ const api = ({ dispatch }) => (next) => async (action) => {
       url,
       method,
       data,
-      headers: {...headers, "Access-Control-Allow-Origin": "*"},
+      // headers: {...headers, "Access-Control-Allow-Origin": "*"},
     });
 
-    // const response = await axios.request({
-    //   baseURL: "http://localhost:9001/api",
-    //   url,
-    //   method,
-    //   data,
-    // });
 
     console.log("response:", response.data);
 

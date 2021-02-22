@@ -5,14 +5,29 @@ import {getFlavors} from "../store/flavors";
 import {getProducts} from "../store/products";
 import {getCurrentUser} from "../store/auth";
 import {addToCart} from "../store/cart";
+import { postReview, getReviews } from "../store/reviews";
+
 import {Switch} from "antd";
 import {Row, Col, Container} from "react-bootstrap";
 import {sortList} from "./common/helpers";
 
+import ReviewForm from "./reviewForm";
+import ReviewCard from "./reviewCard";
+
+
 const CUSTOMIZED_ID = 0;
 
 class ProductPage extends Component {
-    state = {amount: 1}
+    state = { amount: 1, 
+            text:"", 
+            score:0,
+            showReviews: false };
+
+
+    async componentDidMount(){
+        const pid = parseInt(this.props.match.params.id); 
+        await this.props.getReviews(pid);
+    }
 
 
     handleAddToCart(product){
@@ -21,7 +36,8 @@ class ProductPage extends Component {
     }
 
     render() { 
-        const pid = this.props.match.params.id;
+        const pid = parseInt(this.props.match.params.id);
+
         const product = this.props.products.find(product => product.pid === parseInt(pid));
 
         if (!product) return (window.location = "/");
@@ -29,14 +45,13 @@ class ProductPage extends Component {
         let totalPrice = product.price * this.state.amount;
          
         return ( 
-            <Container className="border rounded shadow p-4" style={{maxWidth:600}}>
+            <Container className="border rounded shadow pt-3 pl-4 pr-4 pb-4" style={{maxWidth:600}}>
                 <div>
-                    <img className="card-img-top"
-                        style={{maxWidth:600}} 
+                    <h3>{product.name} <span className="badge badge-secondary">{totalPrice.toFixed(2)}</span></h3>
+                    <img className="card-img-top" 
                         src="/images/product_default_image.jpg" 
                         alt="Card image cap" 
                     />
-                    <h3 className="mt-3">{`${product.name} ($${totalPrice.toFixed(2)})`}</h3>
                 </div>    
                         
                 <div className="card-body text-center">
@@ -53,9 +68,40 @@ class ProductPage extends Component {
                             onClick = {()=>this.handleAddToCart(product)}>Add to cart</button>
                     </Row>   
                 </div>   
-                            
-                <h1>Reviews</h1> 
-                
+
+
+                <button
+                  type="button"
+                  className="btn btn-link"
+                  onClick={async () => {
+                    
+                    this.setState({
+                      showReviews: !this.state.showReviews
+                    });
+                  }}
+                >
+                  {!this.state.showReviews ? <div>Reviews</div> : <div>Hide reviews</div>
+                  }
+                </button>
+
+                {this.state.showReviews? <ReviewForm 
+                    text={this.state.text} 
+                    rating={this.state.score}
+                    onChange={e => this.setState({text: e.target.value})} 
+                    onRate={(newScore) => {
+                        this.setState({score: newScore!==null? newScore: 0})}
+                    }   
+                    onCancel={()=>this.setState({text:"", score: 0})}                 
+                    onSubmit={async () => {
+                        const text = this.state.text;
+                        const score = this.state.score;
+                        this.setState({text:"", score:0});
+                        await this.props.postReview({text:text, score:score, pid:parseInt(pid)});
+                    }}
+                />: null}
+
+                {this.state.showReviews? this.props.reviews.filter(review => review.pid === pid).map(review => <ReviewCard key={review._id} data={review}/>): null}
+   
             </Container>  );
     }
 }
@@ -63,12 +109,15 @@ class ProductPage extends Component {
 const mapStateToProps = (state) => ({
     currentUser: state.auth.currentUser,
     products: state.entities.products.list,
+    reviews: state.entities.reviews.list
   });
   
 const mapDispatchToProps = (dispatch) => ({
     getProducts: () => dispatch(getProducts()),
     getCurrentUser: () => dispatch(getCurrentUser()),
-    addToCart: (product) => dispatch(addToCart(product))
+    addToCart: (product) => dispatch(addToCart(product)),
+    postReview: (review) => dispatch(postReview(review)),
+    getReviews: (pid) => dispatch(getReviews(pid))
   });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductPage);

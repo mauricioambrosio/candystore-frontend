@@ -2,6 +2,7 @@ import { combineReducers } from "redux";
 import productsReducer from "./products";
 import flavorsReducer from "./flavors";
 import cartReducer from "./cart";
+import reviewsReducer from "./reviews";
 
 // import bugsReducer from "./bugs";
 // import projectsReducer from "./projects";
@@ -10,6 +11,7 @@ import cartReducer from "./cart";
 export default combineReducers({
   products: productsReducer,
   flavors: flavorsReducer,
-  cart: cartReducer
+  cart: cartReducer,
+  reviews: reviewsReducer
   // users: usersReducer,
 });

@@ -1,35 +1,42 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { apiCallBegan } from "./api";
 import { isLoggedIn } from "./auth";
-import moment from "moment";
+import _ from "underscore";
 
 const slice = createSlice({
-  name: "flavors",
+  name: "reviews",
   initialState: { list: [], loading: false},
   reducers: {
     // action => action handler
-    flavorPosted: (flavors, action) => {
-        flavors.list.push(action.payload);
+    reviewPosted: (reviews, action) => {
+        const review = action.payload;
+        const reviewIDs = reviews.list.map(review => review._id);
+
+        if(!reviewIDs.includes(review._id)) reviews.list.push(review);
     },
-    flavorEdited: (flavors, action) => {
-        flavors.list = flavors.list.filter(flavor => (flavor.fid !== action.payload.fid));
-        flavors.list.push(action.payload);
+    // reviewEdited: (reviews, action) => {
+    //     reviews.list = reviews.list.filter(review => (review.fid !== action.payload.fid));
+    //     reviews.list.push(action.payload);
+    // },
+    reviewsRequested: (reviews, action) => {
+        reviews.loading = true;
     },
-    flavorsRequested: (flavors, action) => {
-        flavors.loading = true;
+    reviewsReceived: (reviews, action) => {
+        const reviewIDs = reviews.list.map(review => review._id);
+        action.payload.forEach(review => {
+            if(!reviewIDs.includes(review._id)) reviews.list.push(review);
+        });
+
+        reviews.loading = false;
     },
-    flavorsReceived: (flavors, action) => {
-        flavors.list = action.payload;
-        flavors.loading = false;
-    },
-    flavorsRequestFailed: (flavors, action) => {
-      flavors.loading = false;
+    reviewsRequestFailed: (reviews, action) => {
+      reviews.loading = false;
       console.log(action.payload);
     }
   },
 });
 
-export const { flavorPosted, flavorsRequested, flavorsReceived, flavorsRequestFailed, flavorEdited } = slice.actions;
+export const { reviewPosted, reviewsRequested, reviewsReceived, reviewsRequestFailed } = slice.actions;
 
 /*
 
@@ -46,19 +53,19 @@ const genDateTime = (date, time) => {
   return new Date(year, month - 1, day, hours, minutes);
 };*/
 
-export const getFlavors = () =>
+export const getReviews = (pid) =>
   apiCallBegan({
-    url: "/flavors",
+    url: `/reviews/pid/${pid}`,
     method: "get",
-    onSuccess: flavorsReceived.type,
-    onStart: flavorsRequested.type,
-    onError: flavorsRequestFailed.type,
+    onSuccess: reviewsReceived.type,
+    onStart: reviewsRequested.type,
+    onError: reviewsRequestFailed.type,
   });
 
   /*
-  export const deleteFlavor = (id, active) => (dispatch, getState) => {
+  export const deleteReview = (id, active) => (dispatch, getState) => {
     if (!isLoggedIn()) {
-      const mustLoginMessage = "You have to login to be able to delete flavors!";
+      const mustLoginMessage = "You have to login to be able to delete reviews!";
       window.alert(mustLoginMessage);
       throw {
         response: {
@@ -70,18 +77,18 @@ export const getFlavors = () =>
 
     return dispatch(
       apiCallBegan({
-        url: `/flavors/${id}`,
+        url: `/reviews/${id}`,
         method: active?"delete":"post",
-        onSuccess: flavorEdited.type,
+        onSuccess: reviewEdited.type,
         //   onStart: bugsRequested.type,
         //   onError: bugsRequestFailed.type,
       })
     );
   }
 
-  export const editFlavor = (flavor, id, deletedImages) => (dispatch, getState) => {
+  export const editReview = (review, id, deletedImages) => (dispatch, getState) => {
     if (!isLoggedIn()) {
-      const mustLoginMessage = "You have to login to be able to edit flavors!";
+      const mustLoginMessage = "You have to login to be able to edit reviews!";
       window.alert(mustLoginMessage);
       throw {
         response: {
@@ -90,7 +97,7 @@ export const getFlavors = () =>
         },
       };
     }
-    const data = { ...flavor };
+    const data = { ...review };
   
     const formData = new FormData();
   
@@ -128,20 +135,21 @@ export const getFlavors = () =>
     
     return dispatch(
       apiCallBegan({
-        url: `/flavors/${id}`,
+        url: `/reviews/${id}`,
         method: "put",
         data: formData,
         headers: { "Content-Type": "multipart/form-data" },
-        onSuccess: flavorEdited.type,
+        onSuccess: reviewEdited.type,
         //   onStart: bugsRequested.type,
         //   onError: bugsRequestFailed.type,
       })
     );
   };
+  */
 
-export const postFlavor = (flavor) => (dispatch, getState) => {
+export const postReview = (review) => (dispatch, getState) => {
   if (!isLoggedIn()) {
-    const mustLoginMessage = "You have to login to be able to post flavors!";
+    const mustLoginMessage = "You have to login to be able to post reviews!";
     window.alert(mustLoginMessage);
     throw {
       response: {
@@ -150,51 +158,20 @@ export const postFlavor = (flavor) => (dispatch, getState) => {
       },
     };
   }
-  const data = { ...flavor };
 
-  const formData = new FormData();
-
-  formData.append("omitTime", data.omitTime);
-
-  formData.append("adminGen", data.adminGen);
-  formData.append("title", data.title);
-  formData.append("owner", data.owner);
-
-  // formData.append("date", data.date);
-  // formData.append("time", data.time);
-
-  formData.append("dateTime", genDateTime(data.date, data.time));
-
-  formData.append("country", data.country);
-  formData.append("province", data.province);
-  formData.append("town", data.town);
-  formData.append("streetAddress", data.streetAddress);
-  formData.append("details", data.details);
-
-  data.types.forEach((type) => {
-    formData.append("types[]", type);
-  });
-
-  data.contacts.forEach((contact) => {
-    formData.append("contacts[]", contact);
-  });
-
-  data.pictures.forEach((picture) => {
-    formData.append("photos", picture);
-  });
+  console.log("review", review);
 
   return dispatch(
     apiCallBegan({
-      url: "/flavors",
+      url: "/reviews",
       method: "post",
-      data: formData,
-      headers: { "Content-Type": "multipart/form-data" },
-      onSuccess: flavorPosted.type,
+      data: review,
+      onSuccess: reviewPosted.type,
       //   onStart: bugsRequested.type,
       //   onError: bugsRequestFailed.type,
     })
   );
 };
-*/
+
 
 export default slice.reducer;
