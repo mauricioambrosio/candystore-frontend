@@ -3,6 +3,7 @@ import productsReducer from "./products";
 import flavorsReducer from "./flavors";
 import cartReducer from "./cart";
 import reviewsReducer from "./reviews";
+import myOrdersReducer from "./myOrders";
 
 // import bugsReducer from "./bugs";
 // import projectsReducer from "./projects";
@@ -12,6 +13,7 @@ export default combineReducers({
   products: productsReducer,
   flavors: flavorsReducer,
   cart: cartReducer,
-  reviews: reviewsReducer
+  reviews: reviewsReducer,
+  myOrders: myOrdersReducer
   // users: usersReducer,
 });

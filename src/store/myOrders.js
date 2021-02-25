@@ -4,62 +4,35 @@ import { isLoggedIn } from "./auth";
 import _ from "underscore";
 
 const slice = createSlice({
-  name: "reviews",
+  name: "myOrders",
   initialState: { list: [], loading: false},
   reducers: {
     // action => action handler
-    reviewPosted: (reviews, action) => {
-        const review = action.payload;
-        const reviewIDs = reviews.list.map(review => review._id);
 
-        if(!reviewIDs.includes(review._id)) reviews.list.push(review);
+    myOrdersRequested: (myOrders, action) => {
+        myOrders.loading = true;
     },
-    // reviewEdited: (reviews, action) => {
-    //     reviews.list = reviews.list.filter(review => (review.fid !== action.payload.fid));
-    //     reviews.list.push(action.payload);
-    // },
-    reviewsRequested: (reviews, action) => {
-        reviews.loading = true;
+    myOrdersReceived: (myOrders, action) => {
+        console.log(action.payload);
+        myOrders.list = action.payload;
+        myOrders.loading = false;
     },
-    reviewsReceived: (reviews, action) => {
-        const reviewIDs = reviews.list.map(review => review._id);
-        action.payload.forEach(review => {
-            if(!reviewIDs.includes(review._id)) reviews.list.push(review);
-        });
-
-        reviews.loading = false;
-    },
-    reviewsRequestFailed: (reviews, action) => {
-      reviews.loading = false;
+    myOrdersRequestFailed: (myOrders, action) => {
+      myOrders.loading = false;
       console.log(action.payload);
     }
   },
 });
 
-export const { reviewPosted, reviewsRequested, reviewsReceived, reviewsRequestFailed } = slice.actions;
+export const { myOrdersRequested, myOrdersReceived, myOrdersRequestFailed } = slice.actions;
 
-/*
-
-const genDateTime = (date, time) => {
-  const dateArray = moment(date).format("YYYY/MM/DD").split("/");
-  const timeArray = moment(time).format("HH:mm").split(":");
-
-  const year = parseInt(dateArray[0]);
-  const month = parseInt(dateArray[1]);
-  const day = parseInt(dateArray[2]);
-  const hours = parseInt(timeArray[0]);
-  const minutes = parseInt(timeArray[1]);
-
-  return new Date(year, month - 1, day, hours, minutes);
-};*/
-
-export const getReviews = (pid) =>
+export const getMyOrders = () =>
   apiCallBegan({
-    url: `/reviews/pid/${pid}`,
+    url: "/orders/me",
     method: "get",
-    onSuccess: reviewsReceived.type,
-    onStart: reviewsRequested.type,
-    onError: reviewsRequestFailed.type,
+    onSuccess: myOrdersReceived.type,
+    onStart: myOrdersRequested.type,
+    onError: myOrdersRequestFailed.type,
   });
 
   /*
@@ -146,32 +119,5 @@ export const getReviews = (pid) =>
     );
   };
   */
-
-export const postReview = (review) => (dispatch, getState) => {
-  if (!isLoggedIn()) {
-    const mustLoginMessage = "You have to login to be able to post reviews!";
-    window.alert(mustLoginMessage);
-    throw {
-      response: {
-        data: mustLoginMessage,
-        status: 400,
-      },
-    };
-  }
-
-  console.log("review", review);
-
-  return dispatch(
-    apiCallBegan({
-      url: "/reviews",
-      method: "post",
-      data: review,
-      onSuccess: reviewPosted.type,
-      //   onStart: reviewsRequested.type,
-      //   onError: reviewsRequestFailed.type,
-    })
-  );
-};
-
 
 export default slice.reducer;

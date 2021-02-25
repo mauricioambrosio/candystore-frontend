@@ -31,21 +31,6 @@ const slice = createSlice({
 
 export const { flavorPosted, flavorsRequested, flavorsReceived, flavorsRequestFailed, flavorEdited } = slice.actions;
 
-/*
-
-const genDateTime = (date, time) => {
-  const dateArray = moment(date).format("YYYY/MM/DD").split("/");
-  const timeArray = moment(time).format("HH:mm").split(":");
-
-  const year = parseInt(dateArray[0]);
-  const month = parseInt(dateArray[1]);
-  const day = parseInt(dateArray[2]);
-  const hours = parseInt(timeArray[0]);
-  const minutes = parseInt(timeArray[1]);
-
-  return new Date(year, month - 1, day, hours, minutes);
-};*/
-
 export const getFlavors = () =>
   apiCallBegan({
     url: "/flavors",

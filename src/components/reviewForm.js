@@ -5,7 +5,7 @@ import Rating from '@material-ui/lab/Rating';
 const ReviewForm = ({ onSubmit, text, rating, height, onChange, onRate, onCancel }) => {
   
   return (
-    <div>
+    <div className="border-top">
       <Rating
         name="simple-controlled"
         className="mt-3"

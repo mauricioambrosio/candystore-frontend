@@ -6,13 +6,15 @@ import {getProducts} from "../store/products";
 import {getCurrentUser} from "../store/auth";
 import {addToCart} from "../store/cart";
 import { postReview, getReviews } from "../store/reviews";
+import Rating from '@material-ui/lab/Rating';
 
 import {Switch} from "antd";
 import {Row, Col, Container} from "react-bootstrap";
-import {sortList} from "./common/helpers";
 
 import ReviewForm from "./reviewForm";
 import ReviewCard from "./reviewCard";
+
+import ColoredLine from "./common/coloredLine";
 
 
 const CUSTOMIZED_ID = 0;
@@ -21,7 +23,7 @@ class ProductPage extends Component {
     state = { amount: 1, 
             text:"", 
             score:0,
-            showReviews: false };
+            showReviews: true };
 
 
     async componentDidMount(){
@@ -36,18 +38,41 @@ class ProductPage extends Component {
     }
 
     render() { 
+
         const pid = parseInt(this.props.match.params.id);
-
         const product = this.props.products.find(product => product.pid === parseInt(pid));
-
         if (!product) return (window.location = "/");
-
+        
         let totalPrice = product.price * this.state.amount;
          
+
+        const currentProductReviews = this.props.reviews.filter(review => review.pid === pid);
+        const reviewRatings = currentProductReviews.map(review => review.score); 
+
+        const avgRating = reviewRatings.reduce((a, b) => a + b, 0) / reviewRatings.length;
+
         return ( 
-            <Container className="border rounded shadow pt-3 pl-4 pr-4 pb-4" style={{maxWidth:600}}>
+            <Container style={{maxWidth:600}}>
+                                
                 <div>
-                    <h3>{product.name} <span className="badge badge-secondary">{totalPrice.toFixed(2)}</span></h3>
+                    <h3>{product.name+" "} 
+                        <span className="badge badge-secondary">
+                            {totalPrice.toFixed(2)}
+                        </span> 
+                        
+                    </h3> 
+                    
+                    {avgRating >= 1 && avgRating <= 5? <Rating
+                        name="simple-controlled"
+                        value={avgRating}
+                        precision={0.1}
+                        readOnly
+                        // onChange={(event, newValue) => onRate(newValue)}
+                    />: null}
+
+                    <ColoredLine color="grey" height={1} />
+                         
+
                     <img className="card-img-top" 
                         src="/images/product_default_image.jpg" 
                         alt="Card image cap" 
@@ -70,7 +95,7 @@ class ProductPage extends Component {
                 </div>   
 
 
-                <button
+                {/* <button
                   type="button"
                   className="btn btn-link"
                   onClick={async () => {
@@ -82,7 +107,7 @@ class ProductPage extends Component {
                 >
                   {!this.state.showReviews ? <div>Reviews</div> : <div>Hide reviews</div>
                   }
-                </button>
+                </button> */}
 
                 {this.state.showReviews? <ReviewForm 
                     text={this.state.text} 
@@ -100,7 +125,7 @@ class ProductPage extends Component {
                     }}
                 />: null}
 
-                {this.state.showReviews? this.props.reviews.filter(review => review.pid === pid).map(review => <ReviewCard key={review._id} data={review}/>): null}
+                {this.state.showReviews? currentProductReviews.map(review => <ReviewCard key={review._id} data={review}/>): null}
    
             </Container>  );
     }

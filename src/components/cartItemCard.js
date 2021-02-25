@@ -30,12 +30,12 @@ class CartItemCard extends Component {
                 <div className="card-body">
                     {/* <h6 class="card-title">Special title treatment</h6> */}
                     
-                    <h5>{cartItem.flavors.map(flavor=><span className="badge badge-primary m-1 p-2" key={flavor.fid}>{flavor.name}</span>)}</h5>
+                    <h5>{cartItem.flavors.map(flavor=><span className="badge badge-primary p-2 mr-1" key={flavor.fid}>{flavor.name}</span>)}</h5>
 
                     <div className="d-flex">
                         {/* <a href="#" class="btn btn-danger">Delete</a> */}
 
-                        <div className="mr-auto p-2">
+                        <div className="mr-auto pr-2 pl-2">
                             <input className="rounded" 
                                 type="number" 
                                 style={{width:60}} 

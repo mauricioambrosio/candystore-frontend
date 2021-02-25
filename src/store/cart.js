@@ -11,7 +11,8 @@ const slice = createSlice({
   reducers: {
     // action => action handler
     cartPosted: (cart, action) => {
-        
+        console.log(cart);
+        cart.length = 0;        
     },
     editedInCart: (cart, action) => {
         const toEdit = action.payload;
@@ -71,7 +72,7 @@ export const clearCart = () => clearedCart();
 
 export const postCart = (cart) => (dispatch, getState) => {
   if (!isLoggedIn()) {
-    const mustLoginMessage = "You have to login to be able to make purchases!";
+    const mustLoginMessage = "You have to login to be able to complete orders!";
     window.alert(mustLoginMessage);
     throw {
       response: {
@@ -81,14 +82,13 @@ export const postCart = (cart) => (dispatch, getState) => {
     };
   }
 
+
   return dispatch(
     apiCallBegan({
       url: "/orders",
       method: "post",
       data: cart,
-      onSuccess: cartPosted.type,
-      //   onStart: bugsRequested.type,
-      //   onError: bugsRequestFailed.type,
+      onSuccess: cartPosted.type
     })
   );
 };

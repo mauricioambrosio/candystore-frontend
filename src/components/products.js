@@ -44,7 +44,6 @@ class Products extends Component {
 
                     <ColoredLine color="grey" height={1} />
 
-
                     <Row>
                         {this.state.products
                             .filter(product=>product.pid!==CUSTOMIZED_ID)

@@ -90,6 +90,12 @@ const NavBar = ({currentUser, cart}) => {
             </NavLink>
           ) : null}
           
+          {cart.length >= 1?<NavLink
+            className="nav-item nav-link font-weight-bold text-dark"
+            to="/cart"
+          >
+            <i className="fa fa-shopping-cart" aria-hidden="true" /> {CART}
+          </NavLink>:null}    
 
           {isLoggedIn() ? (
             <NavLink
@@ -99,13 +105,6 @@ const NavBar = ({currentUser, cart}) => {
               <i className="fa fa-user" aria-hidden="true" /> {PROFILE}
             </NavLink>
           ) : null}
-
-          {cart.length >= 1?<NavLink
-            className="nav-item nav-link font-weight-bold text-dark"
-            to="/cart"
-          >
-            <i className="fa fa-shopping-cart" aria-hidden="true" /> {CART}
-          </NavLink>:null}    
                       
 
           {/* <NavLink

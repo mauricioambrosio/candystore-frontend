@@ -2,7 +2,6 @@ import React from "react";
 import Joi from "joi-browser";
 import Form from "./common/form";
 import { getGenders } from "../store/services/genders";
-import { sortList } from "../components/common/helpers";
 
 import { getCurrentUser, updateCurrentUser, isLoggedIn } from "../store/auth";
 
@@ -14,7 +13,7 @@ import { connect } from "react-redux";
 
 const EDIT = "Edit";
 const SAVE = "Save";
-const USER_DATA = "User data"
+const PROFILE = "Profile";
 
 const FIRST_NAME = "First name";
 const LAST_NAME = "Second name";
@@ -111,7 +110,7 @@ class ProfileForm extends Form {
     return (
       <div className="d-flex justify-content-center">
         <div className="w-100 mb-4 p-4 rounded shadow" style={{maxWidth: 500}}>
-          <h3>{USER_DATA}</h3>
+          <h3 className="text-center">{PROFILE}</h3>
           <p>
             {currentUser.userName ? (
               <>

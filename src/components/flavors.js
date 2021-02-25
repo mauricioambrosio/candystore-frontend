@@ -7,7 +7,8 @@ import {getCurrentUser} from "../store/auth";
 import {addToCart} from "../store/cart";
 import {Switch} from "antd";
 import {Row, Col, Container} from "react-bootstrap";
-import {sortList} from "./common/helpers";
+import {sortList} from "./common/sortList";
+import ColoredLine from "./common/coloredLine";
 
 const CUSTOMIZED_ID = 0;
 
@@ -33,7 +34,11 @@ class Flavors extends Component {
         totalPrice += this.state.addedFlavors.map(flavor => flavor.price).reduce((a,b) => a+b, 0);
         totalPrice *= this.state.amount;   
         return ( 
-            <Container className="border rounded shadow p-4" style={{maxWidth:600}}>
+            <Container style={{maxWidth:600}}>
+
+                <h3>Customize</h3>
+                <ColoredLine color="grey" height={1} />
+
                 <div>
                     <img className="card-img-top"
                         style={{maxWidth:600}} 
@@ -80,7 +85,7 @@ class Flavors extends Component {
                         
                 <div className="card-body text-center">
                     <Row>
-                        <input className="rounded mr-4 mb-2" 
+                        <input className="rounded mr-3 mb-2" 
                             type="number" 
                             style={{width:60}} 
                             value={this.state.amount} 

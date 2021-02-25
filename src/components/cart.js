@@ -8,12 +8,17 @@ import CartItemCard from "./cartItemCard";
 import {getProducts} from "../store/products";
 import {getFlavors} from "../store/flavors";
 import {getCurrentUser} from "../store/auth";
+
+import {postCart} from "../store/cart";
+
 import {clearCart} from "../store/cart";
 import {connect} from "react-redux";
 
 import Form from "./common/form";
 
 import FormDatePicker from "./common/formDatePicker";
+import ColoredLine from "./common/coloredLine";
+
 
 const DELIVERY_ADDRESS = "Delivery address";
 const PHONE_NUMBER = "Phone number";
@@ -28,7 +33,7 @@ class Cart extends Form {
                 cc_number: "", 
                 cc_expdate:new Date(), 
                 cc_cvv: "" 
-            }, errors:{} }
+            }, errors:{}, completeEnabled: true };
     
     schema = {
         cc_number: Joi.string().min(8).max(32).required(),
@@ -54,8 +59,9 @@ class Cart extends Form {
         
         const totalPrice = cart.map(cartItem => cartItem.price * cartItem.amount).reduce((a,b)=>a+b); 
         return ( 
-            <Container className="border rounded shadow">
-                {/* <ul className="list-inline mx-auto justify-content-center"> */}
+            <Container className="pb-3" style={{maxWidth:600}}>
+                <h3>Cart</h3>
+                <ColoredLine color="grey" height={1} />
 
                     {cart.map((cartItem)=>(
                             <CartItemCard 
@@ -65,46 +71,63 @@ class Cart extends Form {
                         )
                     )}
 
-                <div className="card mt-3 mb-5" >
+                <div className="card mt-3" >
                     <h5 className="card-header"> {"Total ="} <span> {"$"+totalPrice.toFixed(2)} </span></h5>
                 </div>
 
+                <div className="card mt-4 mb-4">
+                    <button className="btn-danger rounded p-2"
+                        onClick={() => this.props.clearCart()}
+                    >
+                        <b>Clear cart</b>
+                    </button>
+                </div>
 
+                {this.renderInput("del_address", DELIVERY_ADDRESS, false)}
+                {this.renderInput("phone_number", PHONE_NUMBER, false)}
 
-
-                    {this.renderInput("del_address", DELIVERY_ADDRESS, false)}
-                    {this.renderInput("phone_number", PHONE_NUMBER, false)}
-
-                    {this.renderInput("cc_number", CREDICT_CARD_NUMBER, false )}
-                                     
-
-                    <FormDatePicker
-                        name={"cc_expdate"}
-                        value={this.state.data["cc_expdate"]}
-                        label={EXPIRATION_DAtE}
-                        onChange={(date) => this.handleDatePick("cc_expdate", date, this.state.data.cc_expdate)}
-                        error={this.state.errors["cc_expdate"]}
-                        picker="month"
-                        format="YYYY/MM"
-                        disabled={false}
-                    />
-
-
-                    {this.renderInput("cc_cvv", CVV, false)}
+                {this.renderInput("cc_number", CREDICT_CARD_NUMBER, false )}
                                     
-                    <div className="card mt-5 mb-3">
-                        <button className="btn-danger rounded p-3"
-                            onClick={()=>this.props.clearCart()}
-                        >
-                            <b>Clear cart</b>
-                        </button>
-                    </div>
 
-                    <div className="card mt-3 mb-3">
-                        <button className="btn-primary rounded p-3"><b>Complete order</b></button>
-                    </div>
+                <FormDatePicker
+                    name={"cc_expdate"}
+                    value={this.state.data["cc_expdate"]}
+                    label={EXPIRATION_DAtE}
+                    onChange={(date) => this.handleDatePick("cc_expdate", date, this.state.data.cc_expdate)}
+                    error={this.state.errors["cc_expdate"]}
+                    picker="month"
+                    format="YYYY/MM"
+                    disabled={false}
+                />
 
-                {/* </ul> */}
+
+                {this.renderInput("cc_cvv", CVV, false)}
+                                
+                
+                <div className="card mt-4 mb-3">
+                    <button className="btn-primary rounded p-2"
+                        disabled={!this.state.completeEnabled}
+                        onClick={async () => {
+
+                            this.setState({completeEnabled: false});
+
+                            const data = this.state.data;
+                            const cart = this.props.cart.map(cartItem => ({pid: cartItem.pid, flavors: cartItem.flavors.map(flavor => flavor.fid), amount: cartItem.amount}));
+                            
+                            let ccard = null; 
+                            
+                            if (data.cc_number && data.cc_cvv) ccard = {cc_number: data.cc_number, cc_cvv: data.cc_cvv, cc_expdate: data.cc_expdate};
+                            
+                            await this.props.postCart({cart:cart, ccard:ccard, del_address: data.del_address, phone_number: data.phone_number});
+
+                            // Add code to keep cart from being posted multiple times.
+
+                        }}
+                    >
+                        <b>Complete order</b>
+                    </button>
+                </div>
+
             </Container>
         )    
     }
@@ -119,7 +142,8 @@ const mapDispatchToProps = (dispatch) => ({
     getProducts: () => dispatch(getProducts()),
     getFlavors: () => dispatch(getFlavors()),
     getCurrentUser: () => dispatch(getCurrentUser()),
-    clearCart: () => dispatch(clearCart())
+    clearCart: () => dispatch(clearCart()),
+    postCart: (cart) => dispatch(postCart(cart))
   });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Cart);
