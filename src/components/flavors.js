@@ -7,7 +7,7 @@ import {getCurrentUser} from "../store/auth";
 import {addToCart} from "../store/cart";
 import {Switch} from "antd";
 import {Row, Col, Container} from "react-bootstrap";
-import {sortList} from "./common/sortList";
+import sortList from "./common/sortList";
 import ColoredLine from "./common/coloredLine";
 
 const CUSTOMIZED_ID = 0;
@@ -19,7 +19,8 @@ class Flavors extends Component {
     handleAddToCart(custom, flavors){
         console.log(custom);
         
-        const flavorsSorted = sortList(flavors, "name");
+        const flavorsSorted = sortList(flavors, false, "name");
+
 
         const price = custom.price + flavors.map(flavor => flavor.price).reduce((a,b)=>a+b, 0);
 
