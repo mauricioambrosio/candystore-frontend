@@ -13,6 +13,8 @@ import Cart from "./components/cart";
 
 import Profile from "./components/profileForm";
 import MyOrders from "./components/myOrders";
+import Inventory from "./components/inventory";
+
 import NotFound from "./components/notFound";
 
 import { Provider } from "react-redux";
@@ -41,6 +43,7 @@ class App extends Component {
             <div>
 
               <Switch>
+                <Route path="/inventory" component={Inventory} />
                 <Route path="/products" component={Products} />
                 <Route path="/flavors" component={Flavors} />
                 <Route path="/productpage/:id" component={ProductPage} />

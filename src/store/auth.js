@@ -4,6 +4,11 @@ import { apiCallBegan } from "./api";
 import _ from "underscore";
 
 const TOKEN_KEY = "candystore:userToken";
+const RID = "candystore:rid";
+
+const CUSTOMER_RID = -1;
+const ADMIN_RID = 2; 
+
 export const AUTH_TOKEN_HEADER = "x-auth-token";
 
 const slice = createSlice({
@@ -17,19 +22,23 @@ const slice = createSlice({
 
     loggedInWithJwt: (auth, action) => {
       const jwt = action.payload.token;
+      const rid = action.payload.rid;
       // auth.token = jwt;
       // auth.currentUser = jwtDecode(jwt);
       localStorage.setItem(TOKEN_KEY, jwt);
+      localStorage.setItem(RID, rid);
     },
     loggedOut: (auth, action) => {
       // auth.token = undefined;
       auth.currentUser = undefined;
       localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(RID);
     },
     currentUserReceived: (auth, action) => {
       if (_.isEmpty(action.payload)) {
         auth.currentUser = undefined;
         localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(RID);
       } else {
         auth.currentUser = action.payload;
       }
@@ -82,7 +91,7 @@ export const updateCurrentUser = (data) =>
 
 export const getCurrentUser = () =>
   apiCallBegan({
-    url: "/users/me",
+    url: isEmployee()?"/employees/me": "/users/me",
     method: "get",
     onSuccess: currentUserReceived.type,
     //   onStart: bugsRequested.type,
@@ -105,6 +114,16 @@ export const logout = () => loggedOut();
 
 export const getJwtFromLocalStorage = () => {
   return localStorage.getItem(TOKEN_KEY);
+};
+
+export const isEmployee = () => {
+  if (parseInt(localStorage.getItem(RID)) !== CUSTOMER_RID) return true;
+  else return false;
+};
+
+export const isAdmin = () => {
+  if (parseInt(localStorage.getItem(RID)) === ADMIN_RID) return true;
+  else return false;
 };
 
 export const isLoggedIn = () => getJwtFromLocalStorage() !== null;

@@ -10,8 +10,6 @@ import {Container, Grid, Row, Col} from "react-bootstrap";
 
 import ColoredLine from "./common/coloredLine";
 
-import SideBar from "./sideBar";
-
 const CUSTOMIZED_ID = 0;
 
 class Products extends Component {

@@ -13,7 +13,6 @@ const EMAIL = "email";
 const FIRST_NAME = "First name";
 const LAST_NAME = "Last name";
 const PASSWORD = "Password";
-
 const REGISTER = "Register";
 
 class RegisterForm extends Form {
@@ -22,7 +21,8 @@ class RegisterForm extends Form {
       email: "",
       firstname: "",
       lastname: "",
-      password: ""
+      password: "",
+      // isEmployee: false
     },
     errors: {},
   };
@@ -31,6 +31,7 @@ class RegisterForm extends Form {
     email: Joi.string().min(1).max(128).required().label(EMAIL),
     firstname: Joi.string().min(1).max(128).required().label(FIRST_NAME),
     lastname: Joi.string().min(1).max(128).required().label(LAST_NAME),
+    
     
     //password must include at least 8 characters, 1 lowercase, 1 uppercase, and 1 digit
     // password: Joi.string()

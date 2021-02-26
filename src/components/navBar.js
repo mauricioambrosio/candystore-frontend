@@ -1,13 +1,17 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import "bootstrap/dist/js/bootstrap";
-import { isLoggedIn } from "../store/auth";
+import { isLoggedIn, isAdmin, isEmployee } from "../store/auth";
+
 import { connect } from "react-redux";
+
 
 const CANDY_STORE = "Candy Store";
 const HOME = "Home";
 
 const MENU = "Menu";
+const INVENTORY = "Inventory";
+
 const CUSTOMIZE = "Customize";
 
 const CART = "Cart";
@@ -21,7 +25,10 @@ const REGISTER = "Register";
 
 const NavBar = ({currentUser, cart}) => {
   
-  const isAdmin = currentUser? currentUser.isAdmin: false; 
+  const isEmployee_ = isEmployee();
+  const isAdmin_ = isAdmin();
+
+  console.log("isAdmin", isAdmin_);
   
   return (
     <nav
@@ -29,7 +36,6 @@ const NavBar = ({currentUser, cart}) => {
       className="navbar navbar-expand-lg navbar-dark fixed-top bg-light text-dark"
       data-toggle="collapse"
       data-target=".navbar-collapse.show"
-
     >
       {/* <Link className="navbar-brand" to="/">
         <i
@@ -67,6 +73,14 @@ const NavBar = ({currentUser, cart}) => {
             <i className="fa fa-home" aria-hidden="true" /> {HOME}
           </NavLink> */}
           
+          {isAdmin_? <NavLink
+            className="nav-item nav-link font-weight-bold text-dark"
+            to="/inventory"
+          >
+            <i className="fa fa-th-list" aria-hidden="true" /> {INVENTORY}
+          </NavLink>: null}
+
+
           <NavLink
             className="nav-item nav-link font-weight-bold text-dark"
             to="/products"

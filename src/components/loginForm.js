@@ -37,6 +37,8 @@ class LoginForm extends Form {
 
       const { state } = this.props.location;
       window.location = state ? state.from.pathname : "/";
+
+      
     } catch (e) {
       if (e.response && e.response.status === 400) {
         const errors = { ...this.state.errors };
