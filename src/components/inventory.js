@@ -2,18 +2,51 @@ import React, {Component} from "react";
 import {Container, Row, Col} from "react-bootstrap";
 import ColoredLine from "./common/coloredLine";
 
-import {getFlavors} from "../store/flavors";
-import {getProducts} from "../store/products";
+import {isEmployee} from "../store/auth";
+
+import {getFlavors, postFlavor, editFlavor, deleteFlavor} from "../store/flavors";
+import {getProducts, postProduct, editProduct, deleteProduct} from "../store/products";
+
 import {getCurrentUser} from "../store/auth";
+import InventoryForm from "./inventoryForm";
+
 import { connect } from "react-redux";
+
 
 class Inventory extends Component {
     state = { 
-        product:{pid: "", name:"", price:""},
-        flavor:{fid:"", name:"", price:""}
+        product:{pid:"", name:"", price:"", active:""},
+        flavor:{fid:"", name:"", price:"", active:""}
     };
 
+    async componentDidMount() {
+        try{
+            await this.props.getProducts();
+            await this.props.getFlavors();
+
+        } catch(err){
+            console.log(err.message)
+        }
+    }
+
+    handleChange(entity, field, value){
+        const newState = {...this.state};
+        newState[entity][field] = value;
+        this.setState(newState);
+    }
+
+    handleClear(entity, idField){
+        const newState = {...this.state};
+        newState[entity][idField] = "";
+        newState[entity].name = "";
+        newState[entity].price = "";
+        newState[entity].active = "";
+        this.setState(newState);
+    }
+
     render() { 
+        if (!isEmployee()) return (window.location = "/");
+
         return ( 
             <Container>
                 <h3>Inventory</h3>
@@ -21,152 +54,64 @@ class Inventory extends Component {
 
                 <Row>
                     <Col>
-                        <Container className="border rounded shadow p-4 mb-4"> 
-                            <h4 className="mb-4">Update Products</h4>
-
-                            <input className="rounded mb-2" 
-                                type="number" 
-                                style={{width:100}} 
-                                value={this.state.product.pid} 
-                                placeholder="Product id"
-                                readOnly/>
-                            <br/>
-
-
-                            <input className="w-100 rounded mb-2"
-                                value={this.state.product.name}
-                                placeholder="Name"
-                                onChange={(e)=>{
-                                    const product = {...this.state.product};
-                                    product.name = e.target.value;
-                                    this.setState({product});
-                                }}
+                        <Container className="border rounded p-4 mb-4">
+                            <InventoryForm 
+                                entity="product"
+                                header="Update Products"
+                                idField="pid"
+                                value={this.state.product}
+                                post={this.props.postProduct}
+                                edit={this.props.editProduct}
+                                delete={this.props.deleteProduct}
+                                handleChange={(entity, field, value) => this.handleChange(entity, field, value)}
+                                handleClear={(entity, idField) => this.handleClear(entity, idField)}
                             />
-                            <br/>
-
-                            <input className="rounded mb-2"
-                                placeholder="$Price"
-                                style={{width:100}}
-                                value={this.state.product.price}
-                                type="number"
-                                onChange={(e)=>{
-                                    const product = {...this.state.product};
-                                    product.price = e.target.value;
-                                    this.setState({product});
-                                }}
-                            />
-
-                            <br/>
-
-                            <div className="mb-2">
-                                <button className="btn btn-primary mb-2 mr-2" 
-                                    onClick = {()=>{}}>
-                                    Add
-                                </button>
-
-                                <button className="btn btn-primary mb-2 mr-2" 
-                                    onClick = {()=>{}}>
-                                    Update
-                                </button>
-
-                                <button className="btn btn-danger mb-2" 
-                                    onClick = {()=>{}}>
-                                    Delete
-                                </button>
-                            </div>
 
                             {this.props.products.map(product => 
-                                <div className="w-100 border rounded mb-2 p-1" 
+                                <div className="w-100 border rounded mb-3 pl-2 pt-2" 
                                     type="button"
                                     key={product.pid}
                                     onClick = {()=>{
-                                        const selectedProduct = {pid: product.pid, name: product.name, price: product.price};
-                                        this.setState({product: selectedProduct});
+                                        
+                                        this.setState({product: {pid: product.pid, name: product.name, price: product.price, active: product.active}});
                                     }}
                                 >
                                     <h6>
-                                        {product.pid + " - " + product.name + ": $" + product.price}
+                                        {product.pid + " - " + product.name + ": $" + product.price + " (" + (product.active?"active":"deleted") + ")"}
                                     </h6>
                                 </div>
                             )}
 
-                            
-
                         </Container>
                     </Col>
                     <Col>
-                        <Container className="border rounded shadow p-4 mb-4"> 
-                            <h4 className="mb-4">Update Flavors</h4>
-
-                            <input className="rounded mb-2" 
-                                placeholder="Flavor id"
-                                type="number" 
-                                style={{width:100}} 
-                                value={this.state.flavor.fid} 
-                                readOnly
-                            />                                
-                            <br/>
-
-                            <input className="w-100 rounded mb-2"
-                                placeholder="Name"
-                                value={this.state.flavor.name}
-                                onChange={(e)=>{
-                                    const flavor = {...this.state.flavor};
-                                    flavor.name = e.target.value;
-                                    this.setState({flavor});
-                                }}
+                        <Container className="border rounded p-4 mb-4"> 
+                            <InventoryForm 
+                                entity="flavor"
+                                header="Update Flavors"
+                                idField="fid"
+                                value={this.state.flavor}
+                                post={this.props.postFlavor}
+                                edit={this.props.editFlavor}
+                                delete={this.props.deleteFlavor}
+                                handleChange={(entity, field, value) => this.handleChange(entity, field, value)}
+                                handleClear={(entity, idField) => this.handleClear(entity, idField)}
                             />
-                            <br/>
-
-                            <input className="rounded mb-2"
-                                placeholder="$Price"
-                                style={{width:100}}
-                                value={this.state.flavor.price}
-                                type="number"
-                                onChange={(e)=>{
-                                    const flavor = {...this.state.flavor};
-                                    flavor.price = e.target.value;
-                                    this.setState({flavor});
-                                }}
-                            />
-
-                            <br/>
-
-                            <div className="mb-2">
-
-                                <button className="btn btn-primary mb-2 mr-2" 
-                                    onClick = {()=>{}}>
-                                    Add
-                                </button>
-
-                                <button className="btn btn-primary mb-2 mr-2" 
-                                    onClick = {()=>{}}>
-                                    Update
-                                </button>
-                                
-                                <button className="btn btn-danger mb-2" 
-                                    onClick = {()=>{}}>
-                                    Delete
-                                </button>
-                            </div>
 
                             {this.props.flavors.map(flavor => 
-                                <div className="w-100 border rounded mb-2 p-1" 
+                                <div className="w-100 border rounded mb-3 pl-2 pt-2" 
                                     key={flavor.fid} 
                                     type="button"
                                     onClick={()=>{
-                                        const selectedFlavor = {fid: flavor.fid, name: flavor.name, price: flavor.price};
-                                        this.setState({flavor: selectedFlavor});
+                                        
+                                        this.setState({flavor: {fid: flavor.fid, name: flavor.name, price: flavor.price, active: flavor.active}});
                                     }}
                                 >
-                                    <h6>{flavor.fid + " - " + flavor.name + ": $" + flavor.price}</h6>
+                                    <h6>{flavor.fid + " - " + flavor.name + ": $" + flavor.price + " (" + (flavor.active?"active":"deleted") + ")"}</h6>
                                 </div>
                             )}
 
-
-                        </Container>
-
-                            
+                        </Container>                            
                     </Col>
                 </Row>
             </Container>
@@ -185,8 +130,17 @@ const mapStateToProps = (state) => ({
   
 const mapDispatchToProps = (dispatch) => ({
     getProducts: () => dispatch(getProducts()),
+    postProduct: (product) => dispatch(postProduct(product)),
+    editProduct: (product) => dispatch(editProduct(product)),
+    deleteProduct: (product) => dispatch(deleteProduct(product)),
+    
     getFlavors: () => dispatch(getFlavors()),
+    postFlavor: (flavor) => dispatch(postFlavor(flavor)),
+    editFlavor: (flavor) => dispatch(editFlavor(flavor)),
+    deleteFlavor: (flavor) => dispatch(deleteFlavor(flavor)),
+    
     getCurrentUser: () => dispatch(getCurrentUser()),
+
   });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Inventory);

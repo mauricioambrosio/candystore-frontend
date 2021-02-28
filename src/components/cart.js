@@ -9,7 +9,7 @@ import {getProducts} from "../store/products";
 import {getFlavors} from "../store/flavors";
 import {getCurrentUser} from "../store/auth";
 
-import {postCart} from "../store/cart";
+import {postCart, genItemKey} from "../store/cart";
 
 import {clearCart} from "../store/cart";
 import {connect} from "react-redux";
@@ -27,13 +27,17 @@ const EXPIRATION_DAtE = "Expiration date";
 const CVV = "CVV"
 
 class Cart extends Form {
-    state = { data:{ 
-                del_address:"", 
-                phone_number:"", 
-                cc_number: "", 
-                cc_expdate:new Date(), 
-                cc_cvv: "" 
-            }, errors:{}, completeEnabled: true };
+    state = { 
+                data:{ 
+                    del_address:"", 
+                    phone_number:"", 
+                    cc_number: "", 
+                    cc_expdate: new Date(), 
+                    cc_cvv: "" 
+                }, 
+                errors:{}, 
+                completeEnabled: true 
+            };
     
     schema = {
         cc_number: Joi.string().min(8).max(32).required(),
@@ -47,12 +51,19 @@ class Cart extends Form {
         const currentUser = this.props.currentUser;
         if (currentUser){
             const newState={};
-            newState.data={...this.state.data, del_address:currentUser.address,phone_number:currentUser.phone_number}
+                
+            newState.data={
+                ...this.state.data, 
+                del_address:currentUser.address ? currentUser.address : "",
+                phone_number:currentUser.phone_number ? currentUser.phone_number : ""
+            }
+            
             this.setState(newState);
         }
     }
 
     render() { 
+
         const cart = this.props.cart;
         
         if (cart.length < 1) return (window.location = "/");
@@ -65,7 +76,7 @@ class Cart extends Form {
 
                     {cart.map((cartItem)=>(
                             <CartItemCard 
-                                key={cartItem.pid+cartItem.flavors.toString()} 
+                                key={genItemKey(cartItem)} 
                                 cartItem={cartItem}
                             />                        
                         )

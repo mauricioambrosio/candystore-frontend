@@ -12,8 +12,11 @@ const slice = createSlice({
         products.list.push(action.payload);
     },
     productEdited: (products, action) => {
+        const productIds = products.list.map(product => product.pid); 
+        const index = productIds.indexOf(action.payload.pid);
+
         products.list = products.list.filter(product => (product.pid !== action.payload.pid));
-        products.list.push(action.payload);
+        products.list.splice(index, 0, action.payload);
     },
     productsRequested: (products, action) => {
         products.loading = true;
@@ -41,8 +44,8 @@ export const getProducts = () =>
     onError: productsRequestFailed.type,
   });
 
-  /*
-  export const deleteProduct = (id, active) => (dispatch, getState) => {
+  
+  export const deleteProduct = (product) => (dispatch, getState) => {
     if (!isLoggedIn()) {
       const mustLoginMessage = "You have to login to be able to delete products!";
       window.alert(mustLoginMessage);
@@ -56,8 +59,8 @@ export const getProducts = () =>
 
     return dispatch(
       apiCallBegan({
-        url: `/products/${id}`,
-        method: active?"delete":"post",
+        url: `/products/${product.pid}`,
+        method: product.active?"delete":"post",
         onSuccess: productEdited.type,
         //   onStart: bugsRequested.type,
         //   onError: bugsRequestFailed.type,
@@ -65,7 +68,8 @@ export const getProducts = () =>
     );
   }
 
-  export const editProduct = (product, id, deletedImages) => (dispatch, getState) => {
+  
+  export const editProduct = (product) => (dispatch, getState) => {
     if (!isLoggedIn()) {
       const mustLoginMessage = "You have to login to be able to edit products!";
       window.alert(mustLoginMessage);
@@ -76,54 +80,19 @@ export const getProducts = () =>
         },
       };
     }
-    const data = { ...product };
-  
-    const formData = new FormData();
-  
-    formData.append("title", data.title);
-    formData.append("owner", data.owner);
-  
-    // formData.append("date", data.date);
-    // formData.append("time", data.time);
-  
-    formData.append("omitTime", data.omitTime);
-    
-    formData.append("dateTime", genDateTime(data.date, data.time));
-  
-    formData.append("country", data.country);
-    formData.append("province", data.province);
-    formData.append("town", data.town);
-    formData.append("streetAddress", data.streetAddress);
-    formData.append("details", data.details);
-  
-    data.types.forEach((type) => {
-      formData.append("types[]", type);
-    });
-  
-    data.contacts.forEach((contact) => {
-      formData.append("contacts[]", contact);
-    });
-  
-    deletedImages.forEach((uri)=>{
-      formData.append("deletedImages[]", uri);
-    })
-
-    data.pictures.forEach((picture) => {
-      formData.append("photos", picture);
-    });
-    
+        
     return dispatch(
       apiCallBegan({
-        url: `/products/${id}`,
+        url: `/products/${product.pid}`,
         method: "put",
-        data: formData,
-        headers: { "Content-Type": "multipart/form-data" },
+        data: {name:product.name, price:product.price},
         onSuccess: productEdited.type,
         //   onStart: bugsRequested.type,
         //   onError: bugsRequestFailed.type,
       })
     );
   };
+
 
 export const postProduct = (product) => (dispatch, getState) => {
   if (!isLoggedIn()) {
@@ -136,51 +105,18 @@ export const postProduct = (product) => (dispatch, getState) => {
       },
     };
   }
-  const data = { ...product };
-
-  const formData = new FormData();
-
-  formData.append("omitTime", data.omitTime);
-
-  formData.append("adminGen", data.adminGen);
-  formData.append("title", data.title);
-  formData.append("owner", data.owner);
-
-  // formData.append("date", data.date);
-  // formData.append("time", data.time);
-
-  formData.append("dateTime", genDateTime(data.date, data.time));
-
-  formData.append("country", data.country);
-  formData.append("province", data.province);
-  formData.append("town", data.town);
-  formData.append("streetAddress", data.streetAddress);
-  formData.append("details", data.details);
-
-  data.types.forEach((type) => {
-    formData.append("types[]", type);
-  });
-
-  data.contacts.forEach((contact) => {
-    formData.append("contacts[]", contact);
-  });
-
-  data.pictures.forEach((picture) => {
-    formData.append("photos", picture);
-  });
 
   return dispatch(
     apiCallBegan({
       url: "/products",
       method: "post",
-      data: formData,
-      headers: { "Content-Type": "multipart/form-data" },
+      data: product,
       onSuccess: productPosted.type,
       //   onStart: bugsRequested.type,
       //   onError: bugsRequestFailed.type,
     })
   );
 };
-*/
+
 
 export default slice.reducer;

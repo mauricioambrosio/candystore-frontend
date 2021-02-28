@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { apiCallBegan } from "./api";
-import { isLoggedIn } from "./auth";
+import { isEmployee, isLoggedIn } from "./auth";
 import _ from "underscore";
 import moment from "moment";
 import cartItemCard from "../components/cartItemCard";
@@ -16,9 +16,9 @@ const slice = createSlice({
     },
     editedInCart: (cart, action) => {
         const toEdit = action.payload;
-        const toEditKey = toEdit.pid + toEdit.flavors.toString();
+        const toEditKey = genItemKey(toEdit);
 
-        const cartItemKeys = cart.map(item => item.pid + item.flavors.toString());
+        const cartItemKeys = cart.map(item => genItemKey(item));
         
         if (cartItemKeys.includes(toEditKey)) {
             const index = cartItemKeys.indexOf(toEditKey);
@@ -30,10 +30,13 @@ const slice = createSlice({
         console.log(action.payload);
 
         const newItem = action.payload;
-        const newItemKey = newItem.pid + newItem.flavors.toString();
+        const newItemKey = genItemKey(newItem);
 
-        const cartItemKeys = cart.map(item => item.pid + item.flavors.toString());
+        const cartItemKeys = cart.map(item => genItemKey(item));
         
+        console.log(cartItemKeys);
+        console.log(newItemKey);
+
         if (cartItemKeys.includes(newItemKey)) {
             const index = cartItemKeys.indexOf(newItemKey);
             cart[index].amount += newItem.amount; 
@@ -43,9 +46,9 @@ const slice = createSlice({
     },
     removedFromCart: (cart, action) => {
         const toRemove = action.payload;
-        const toRemoveKey = toRemove.pid + toRemove.flavors.toString();
+        const toRemoveKey = genItemKey(toRemove);
 
-        const cartItemKeys = cart.map(item => item.pid + item.flavors.toString());
+        const cartItemKeys = cart.map(item => genItemKey(toRemove));
         
         if (cartItemKeys.includes(toRemoveKey)) {
             const index = cartItemKeys.indexOf(toRemoveKey);
@@ -61,6 +64,8 @@ const slice = createSlice({
   },
 });
 
+export const genItemKey = (item) => (item.pid + "(" + item.flavors.map(flavor => flavor.fid) + ")");
+
 export const { cartPosted, addedToCart, removedFromCart, editedInCart, cartPostFailed, clearedCart } = slice.actions;
 
 
@@ -71,8 +76,8 @@ export const clearCart = () => clearedCart();
 
 
 export const postCart = (cart) => (dispatch, getState) => {
-  if (!isLoggedIn()) {
-    const mustLoginMessage = "You have to login to be able to complete orders!";
+  if (!isLoggedIn() || isEmployee()) {
+    const mustLoginMessage = "You have to login as a customer to be able to complete orders!";
     window.alert(mustLoginMessage);
     throw {
       response: {

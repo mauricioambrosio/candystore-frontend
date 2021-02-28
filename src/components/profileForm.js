@@ -3,7 +3,7 @@ import Joi from "joi-browser";
 import Form from "./common/form";
 import { getGenders } from "../store/services/genders";
 
-import { getCurrentUser, updateCurrentUser, isLoggedIn } from "../store/auth";
+import { getCurrentUser, updateCurrentUser, isLoggedIn, isEmployee } from "../store/auth";
 
 import moment from "moment";
 import _ from "underscore";
@@ -17,6 +17,7 @@ const PROFILE = "Profile";
 
 const FIRST_NAME = "First name";
 const LAST_NAME = "Second name";
+const SOCIAL_SECURITY_NUMBER = "Social security number";
 const BIRTHDATE = "Birthdate";
 const GENDER = "Gender";
 const PHONE_NUMBER = "Phone number";
@@ -29,6 +30,7 @@ class ProfileForm extends Form {
     data: {
       firstname: "",
       lastname: "",
+      ssn: "",
       birthdate: new Date(),
       gender: "",
       phone_number:"",
@@ -38,13 +40,20 @@ class ProfileForm extends Form {
   };
 
   populateCurrentUser(currentUser) {
+    
     const data = { ...this.state.data };
     if (currentUser.firstname) data.firstname = currentUser.firstname;
     if (currentUser.lastname) data.lastname = currentUser.lastname;
+    
+    if (isEmployee() && currentUser.ssn) data.ssn = currentUser.ssn;
+    
     if (currentUser.birthdate) data.birthdate = new Date(currentUser.birthdate);
     if (currentUser.gender) data.gender = currentUser.gender;
     if (currentUser.phone_number) data.phone_number = currentUser.phone_number;
     if (currentUser.address) data.address = currentUser.address;
+    
+    console.log(data);
+
     return data;
   }
 
@@ -68,8 +77,9 @@ class ProfileForm extends Form {
   }
 
   schema = {
-    firstname: Joi.string().min(1).max(128).required().label(FIRST_NAME),
-    lastname: Joi.string().min(1).max(128).required().label(LAST_NAME),
+    firstname: Joi.string().min(1).max(64).required().label(FIRST_NAME),
+    lastname: Joi.string().min(1).max(64).required().label(LAST_NAME),
+    ssn: Joi.string().max(32).allow(null, "").label(SOCIAL_SECURITY_NUMBER),
     birthdate: Joi.date()
       .max(new Date().setDate(new Date().getDate() - 1))
       .label(BIRTHDATE),
@@ -154,6 +164,8 @@ class ProfileForm extends Form {
             {/* {this.renderInput("userName", USERNAME, !edit)} */}
             {this.renderInput("firstname", FIRST_NAME, !edit)}
             {this.renderInput("lastname", LAST_NAME, !edit)}
+            {isEmployee()? this.renderInput("ssn", SOCIAL_SECURITY_NUMBER, !edit) : null}
+            
             {this.renderDatePicker(
               "birthdate",
               BIRTHDATE,

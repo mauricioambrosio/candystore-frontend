@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import "bootstrap/dist/js/bootstrap";
-import { isLoggedIn, isAdmin, isEmployee } from "../store/auth";
+import { isLoggedIn, isEmployee } from "../store/auth";
 
 import { connect } from "react-redux";
 
@@ -16,6 +16,8 @@ const CUSTOMIZE = "Customize";
 
 const CART = "Cart";
  
+const ORDERS = "Orders";
+const STATISTICS = "Statistics";
 const MY_ORDERS = "My orders";
 const PROFILE = "Profile";
 const ABOUT = "About";
@@ -24,12 +26,7 @@ const LOGIN = "Login";
 const REGISTER = "Register";
 
 const NavBar = ({currentUser, cart}) => {
-  
-  const isEmployee_ = isEmployee();
-  const isAdmin_ = isAdmin();
-
-  console.log("isAdmin", isAdmin_);
-  
+    
   return (
     <nav
       // className="navbar navbar-expand-lg navbar-light bg-light fixed-top"
@@ -73,13 +70,28 @@ const NavBar = ({currentUser, cart}) => {
             <i className="fa fa-home" aria-hidden="true" /> {HOME}
           </NavLink> */}
           
-          {isAdmin_? <NavLink
+          {isEmployee()? <NavLink
+            className="nav-item nav-link font-weight-bold text-dark"
+            to="/orders"
+          >
+            <i className="fa fa-shopping-basket" aria-hidden="true" /> {ORDERS}
+          </NavLink>: null}
+          
+
+
+          {isEmployee()? <NavLink
             className="nav-item nav-link font-weight-bold text-dark"
             to="/inventory"
           >
             <i className="fa fa-th-list" aria-hidden="true" /> {INVENTORY}
           </NavLink>: null}
 
+          {isEmployee()? <NavLink
+            className="nav-item nav-link font-weight-bold text-dark"
+            to="/stats"
+          >
+            <i className="fa fa-pie-chart" aria-hidden="true" /> {STATISTICS}
+          </NavLink>: null}
 
           <NavLink
             className="nav-item nav-link font-weight-bold text-dark"
@@ -95,12 +107,12 @@ const NavBar = ({currentUser, cart}) => {
             <i className="fa fa-cubes" aria-hidden="true" /> {CUSTOMIZE}
           </NavLink>
 
-          {isLoggedIn() ? (
+          {isLoggedIn() && !isEmployee()? (
             <NavLink
               className="nav-item nav-link font-weight-bold text-dark"
               to="/myorders"
             >
-              <i className="fa fa-table" aria-hidden="true" /> {MY_ORDERS}
+              <i className="fa fa-shopping-basket" aria-hidden="true" /> {MY_ORDERS}
             </NavLink>
           ) : null}
           

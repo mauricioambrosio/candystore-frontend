@@ -3,12 +3,18 @@ import {Col, Row} from "react-bootstrap";
 
 import {Link} from "react-router-dom";
 import {addToCart} from "../store/cart";
+import Rating from '@material-ui/lab/Rating';
+
+import {getReviews} from "../store/reviews";
 
 import { connect } from "react-redux";
 
 class ProductCard extends Component{
     state = {amount:1}
 
+    async componentDidMount(){
+        await this.props.getReviews(this.props.product.pid);
+    }
 
     handleAddToCart(product){
         this.props.addToCart({...product, flavors:[], amount:this.state.amount});
@@ -19,6 +25,11 @@ class ProductCard extends Component{
         const product = this.props.product;
         const totalPrice = this.state.amount * product.price;
 
+        const currentProductReviews = this.props.reviews.filter(review => review.pid === product.pid);
+        const reviewRatings = currentProductReviews.map(review => review.score); 
+        const avgRating = reviewRatings.reduce((a, b) => a + b, 0) / reviewRatings.length;
+
+
         return (
         <div className="card rounded shadow mb-4 mr-4" style={{width: 200, minWidth:200}}>            
             <Link to={`/productPage/${product.pid}`}>
@@ -26,16 +37,21 @@ class ProductCard extends Component{
                     src="/images/product_default_image.jpg" 
                     alt="Card image cap" 
                     role="button" 
-                    // onClick = {() => this.props.history.push({
-                    //             pathname: `/productPage/${product.pid}`,
-                    //             // state: { newUser: true },
-                    //         })}  
-                     
                     />
             </Link>
             
             <div className="card-body text-center">
-                <h5 className="card-title">{product.name} <span className="badge badge-secondary"> {"$"+totalPrice.toFixed(2)}</span></h5>
+                <Link to={`/productPage/${product.pid}`}>
+                    <h5 className="card-title">{product.name} <span className="badge badge-secondary"> {"$"+totalPrice.toFixed(2)}</span></h5>
+                    {avgRating >= 1 && avgRating <= 5? <Rating
+                        name="read-only"
+                        value={avgRating}
+                        precision={0.1}
+                        size="small"
+                        readOnly
+                    />: null}
+                </Link>
+                
                 <Col>
                     <button  className="btn btn-primary" 
                     onClick = {
@@ -62,10 +78,12 @@ class ProductCard extends Component{
 
 const mapStateToProps = (state) => ({
     cart: state.entities.cart,
+    reviews: state.entities.reviews.list
   });
   
 const mapDispatchToProps = (dispatch) => ({
     addToCart: (product) => dispatch(addToCart(product)),
+    getReviews: (pid) => dispatch(getReviews(pid))
     // updateCurrentUser: (data) => dispatch(updateCurrentUser(data)),
 });
 

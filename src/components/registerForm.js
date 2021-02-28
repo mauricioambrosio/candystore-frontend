@@ -28,9 +28,9 @@ class RegisterForm extends Form {
   };
 
   schema = {
-    email: Joi.string().min(1).max(128).required().label(EMAIL),
-    firstname: Joi.string().min(1).max(128).required().label(FIRST_NAME),
-    lastname: Joi.string().min(1).max(128).required().label(LAST_NAME),
+    email: Joi.string().min(1).max(64).required().label(EMAIL),
+    firstname: Joi.string().min(1).max(64).required().label(FIRST_NAME),
+    lastname: Joi.string().min(1).max(64).required().label(LAST_NAME),
     
     
     //password must include at least 8 characters, 1 lowercase, 1 uppercase, and 1 digit

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { apiCallBegan } from "./api";
-import { isLoggedIn } from "./auth";
+import { isLoggedIn, isEmployee, isAdmin } from "./auth";
 import moment from "moment";
 
 const slice = createSlice({
@@ -11,9 +11,12 @@ const slice = createSlice({
     flavorPosted: (flavors, action) => {
         flavors.list.push(action.payload);
     },
-    flavorEdited: (flavors, action) => {
+    flavorEdited: (flavors, action) => { 
+        const flavorIds = flavors.list.map(flavor => flavor.fid); 
+        const index = flavorIds.indexOf(action.payload.fid);
+
         flavors.list = flavors.list.filter(flavor => (flavor.fid !== action.payload.fid));
-        flavors.list.push(action.payload);
+        flavors.list.splice(index, 0, action.payload);
     },
     flavorsRequested: (flavors, action) => {
         flavors.loading = true;
@@ -40,10 +43,10 @@ export const getFlavors = () =>
     onError: flavorsRequestFailed.type,
   });
 
-  /*
-  export const deleteFlavor = (id, active) => (dispatch, getState) => {
+  
+  export const deleteFlavor = (flavor) => (dispatch, getState) => {
     if (!isLoggedIn()) {
-      const mustLoginMessage = "You have to login to be able to delete flavors!";
+      const mustLoginMessage = "You have to login to be able to delete/restore flavors!";
       window.alert(mustLoginMessage);
       throw {
         response: {
@@ -55,8 +58,8 @@ export const getFlavors = () =>
 
     return dispatch(
       apiCallBegan({
-        url: `/flavors/${id}`,
-        method: active?"delete":"post",
+        url: `/flavors/${flavor.fid}`,
+        method: flavor.active?"delete":"post",
         onSuccess: flavorEdited.type,
         //   onStart: bugsRequested.type,
         //   onError: bugsRequestFailed.type,
@@ -64,7 +67,8 @@ export const getFlavors = () =>
     );
   }
 
-  export const editFlavor = (flavor, id, deletedImages) => (dispatch, getState) => {
+  
+  export const editFlavor = (flavor) => (dispatch, getState) => {
     if (!isLoggedIn()) {
       const mustLoginMessage = "You have to login to be able to edit flavors!";
       window.alert(mustLoginMessage);
@@ -75,54 +79,19 @@ export const getFlavors = () =>
         },
       };
     }
-    const data = { ...flavor };
-  
-    const formData = new FormData();
-  
-    formData.append("title", data.title);
-    formData.append("owner", data.owner);
-  
-    // formData.append("date", data.date);
-    // formData.append("time", data.time);
-  
-    formData.append("omitTime", data.omitTime);
-    
-    formData.append("dateTime", genDateTime(data.date, data.time));
-  
-    formData.append("country", data.country);
-    formData.append("province", data.province);
-    formData.append("town", data.town);
-    formData.append("streetAddress", data.streetAddress);
-    formData.append("details", data.details);
-  
-    data.types.forEach((type) => {
-      formData.append("types[]", type);
-    });
-  
-    data.contacts.forEach((contact) => {
-      formData.append("contacts[]", contact);
-    });
-  
-    deletedImages.forEach((uri)=>{
-      formData.append("deletedImages[]", uri);
-    })
-
-    data.pictures.forEach((picture) => {
-      formData.append("photos", picture);
-    });
-    
+        
     return dispatch(
       apiCallBegan({
-        url: `/flavors/${id}`,
+        url: `/flavors/${flavor.fid}`,
         method: "put",
-        data: formData,
-        headers: { "Content-Type": "multipart/form-data" },
+        data: {name:flavor.name, price:flavor.price},
         onSuccess: flavorEdited.type,
         //   onStart: bugsRequested.type,
         //   onError: bugsRequestFailed.type,
       })
     );
   };
+
 
 export const postFlavor = (flavor) => (dispatch, getState) => {
   if (!isLoggedIn()) {
@@ -135,51 +104,18 @@ export const postFlavor = (flavor) => (dispatch, getState) => {
       },
     };
   }
-  const data = { ...flavor };
-
-  const formData = new FormData();
-
-  formData.append("omitTime", data.omitTime);
-
-  formData.append("adminGen", data.adminGen);
-  formData.append("title", data.title);
-  formData.append("owner", data.owner);
-
-  // formData.append("date", data.date);
-  // formData.append("time", data.time);
-
-  formData.append("dateTime", genDateTime(data.date, data.time));
-
-  formData.append("country", data.country);
-  formData.append("province", data.province);
-  formData.append("town", data.town);
-  formData.append("streetAddress", data.streetAddress);
-  formData.append("details", data.details);
-
-  data.types.forEach((type) => {
-    formData.append("types[]", type);
-  });
-
-  data.contacts.forEach((contact) => {
-    formData.append("contacts[]", contact);
-  });
-
-  data.pictures.forEach((picture) => {
-    formData.append("photos", picture);
-  });
 
   return dispatch(
     apiCallBegan({
       url: "/flavors",
       method: "post",
-      data: formData,
-      headers: { "Content-Type": "multipart/form-data" },
+      data: flavor,
       onSuccess: flavorPosted.type,
       //   onStart: bugsRequested.type,
       //   onError: bugsRequestFailed.type,
     })
   );
 };
-*/
+
 
 export default slice.reducer;

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { apiCallBegan } from "./api";
-import { isLoggedIn } from "./auth";
+import { isLoggedIn, isEmployee } from "./auth";
 import _ from "underscore";
 
 const slice = createSlice({
@@ -52,6 +52,14 @@ const genDateTime = (date, time) => {
 
   return new Date(year, month - 1, day, hours, minutes);
 };*/
+
+export const getAllReviews = () => apiCallBegan({
+  url: `/reviews`,
+  method: "get",
+  onSuccess: reviewsReceived.type,
+  onStart: reviewsRequested.type,
+  onError: reviewsRequestFailed.type,
+});
 
 export const getReviews = (pid) =>
   apiCallBegan({
@@ -148,8 +156,8 @@ export const getReviews = (pid) =>
   */
 
 export const postReview = (review) => (dispatch, getState) => {
-  if (!isLoggedIn()) {
-    const mustLoginMessage = "You have to login to be able to post reviews!";
+  if (!isLoggedIn()|| isEmployee()) {
+    const mustLoginMessage = "You have to login as a customer to be able to post reviews!";
     window.alert(mustLoginMessage);
     throw {
       response: {

@@ -10,10 +10,13 @@ import Flavors from "./components/flavors";
 
 import Cart from "./components/cart";
 
-
 import Profile from "./components/profileForm";
+import Orders from "./components/orders";
 import MyOrders from "./components/myOrders";
 import Inventory from "./components/inventory";
+import Stats from "./components/stats";
+
+import {isEmployee} from "./store/auth";
 
 import NotFound from "./components/notFound";
 
@@ -43,7 +46,9 @@ class App extends Component {
             <div>
 
               <Switch>
+                <Route path="/orders" component={Orders} />
                 <Route path="/inventory" component={Inventory} />
+                <Route path="/stats" component={Stats} />
                 <Route path="/products" component={Products} />
                 <Route path="/flavors" component={Flavors} />
                 <Route path="/productpage/:id" component={ProductPage} />
@@ -54,9 +59,12 @@ class App extends Component {
                 <Route path="/cart" component={Cart}/>
 
                 <Route path="/logout" component={Logout} />
+                
+                <Route path="/not-found" component={NotFound} />
 
 
-                <Redirect exact from="/" to="/products" />
+                <Redirect exact from="/" to= {isEmployee() ? "/orders" : "/products"} />
+
                 <Redirect to="/not-found" />
 
               </Switch>

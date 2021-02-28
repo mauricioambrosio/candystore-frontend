@@ -72,43 +72,54 @@ export const register = (user) =>
     },
   });
 
-export const updateCurrentUser = (data) =>
-  apiCallBegan({
-    url: "/users/me",
+export const updateCurrentUser = (data) => {
+  const customerFields = [
+    "firstname",
+    "lastname",
+    "birthdate",
+    "gender",
+    "phone_number",
+    "address"
+  ];
+
+  const employeeFields = [
+    "firstname",
+    "lastname",
+    "ssn",
+    "birthdate",
+    "gender",
+    "phone_number",
+    "address"
+  ];
+
+  return apiCallBegan({
+    url: isEmployee() ? "/employees/me" : "/users/me",
     method: "put",
     data: {
-      ..._.pick(data, [
-        "firstname",
-        "lastname",
-        "birthdate",
-        "gender",
-        "phone_number",
-        "address"
-      ]),
+      ..._.pick(data, isEmployee() ? employeeFields: customerFields),
     },
     onSuccess: currentUserUpdated.type,
   });
+}
 
 export const getCurrentUser = () =>
   apiCallBegan({
-    url: isEmployee()?"/employees/me": "/users/me",
+    url: isEmployee() ? "/employees/me" : "/users/me",
     method: "get",
     onSuccess: currentUserReceived.type,
     //   onStart: bugsRequested.type,
     //   onError: bugsRequestFailed.type,
   });
 
-export const login = ({ email, password, isEmployee }) => {
-  
-  return apiCallBegan({
-    url: isEmployee ? "/login/e" : "/login/c",
-    method: "post",
-    data: { email, password },
-    onSuccess: loggedInWithJwt.type,
-    //   onStart: bugsRequested.type,
-    //   onError: bugsRequestFailed.type,
-  });
-}
+
+export const login = ({ email, password, isEmployee }) => apiCallBegan({
+  url: isEmployee ? "/login/e" : "/login/c",
+  method: "post",
+  data: { email, password },
+  onSuccess: loggedInWithJwt.type,
+  //   onStart: bugsRequested.type,
+  //   onError: bugsRequestFailed.type,
+});
 
 export const logout = () => loggedOut();
 
@@ -117,12 +128,12 @@ export const getJwtFromLocalStorage = () => {
 };
 
 export const isEmployee = () => {
-  if (parseInt(localStorage.getItem(RID)) !== CUSTOMER_RID) return true;
+  if (isLoggedIn() && parseInt(localStorage.getItem(RID)) !== CUSTOMER_RID) return true;
   else return false;
 };
 
 export const isAdmin = () => {
-  if (parseInt(localStorage.getItem(RID)) === ADMIN_RID) return true;
+  if (isLoggedIn() && parseInt(localStorage.getItem(RID)) === ADMIN_RID) return true;
   else return false;
 };
 

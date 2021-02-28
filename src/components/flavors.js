@@ -48,10 +48,11 @@ class Flavors extends Component {
                     />
                     <h3 className="mt-3">{`Customize ($${totalPrice.toFixed(2)})`}</h3>
                     <Row className="pl-3 mt-3">
-                        {this.props.flavors.map((flavor)=>{
-                            return (
 
-                                <div key={flavor.fid} className="mr-3">
+                        {this.props.flavors.map((flavor) => {
+                            
+                            return (
+                                flavor.active? <div key={flavor.fid} className="mr-3">
                                                         
                                     <Switch 
                                     
@@ -69,18 +70,17 @@ class Flavors extends Component {
 
                                                 updatedAddedFlavors = updatedAddedFlavors.filter(f=>f.fid !== flavor.fid);
                                             }
-                                            
                                             this.setState({addedFlavors: updatedAddedFlavors});
-
-                                    }}/>
+                                        }
+                                    }/>
 
                                     {" "}
                                     <label htmlFor={flavor.name}>{`${flavor.name}($${flavor.price})`}</label>
                                     {" "}
                                     
-                                </div>);   
-                            })}
-
+                                </div>: null
+                            );   
+                        })}
                     </Row>
                 </div>    
                         

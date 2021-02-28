@@ -121,6 +121,7 @@ class ProductPage extends Component {
                         const text = this.state.text;
                         const score = this.state.score;
                         this.setState({text:"", score:0});
+                        
                         await this.props.postReview({text:text, score:score, pid:parseInt(pid)});
                     }}
                 />: null}
