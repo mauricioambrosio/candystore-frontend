@@ -7,7 +7,7 @@ import CartItemCard from "./cartItemCard";
 
 import {getProducts} from "../store/products";
 import {getFlavors} from "../store/flavors";
-import {getCurrentUser} from "../store/auth";
+import {getCurrentUser, isEmployee} from "../store/auth";
 
 import {postCart, genItemKey} from "../store/cart";
 
@@ -18,6 +18,7 @@ import Form from "./common/form";
 
 import FormDatePicker from "./common/formDatePicker";
 import ColoredLine from "./common/coloredLine";
+import { Redirect } from "react-router-dom";
 
 
 const DELIVERY_ADDRESS = "Delivery address";
@@ -66,7 +67,7 @@ class Cart extends Form {
 
         const cart = this.props.cart;
         
-        if (cart.length < 1) return (window.location = "/");
+        if (cart.length < 1) return window.location = "/myorders";
         
         const totalPrice = cart.map(cartItem => cartItem.price * cartItem.amount).reduce((a,b)=>a+b); 
         return ( 
@@ -128,7 +129,6 @@ class Cart extends Form {
                             if (data.cc_number && data.cc_cvv) ccard = {cc_number: data.cc_number, cc_cvv: data.cc_cvv, cc_expdate: data.cc_expdate};
                             
                             await this.props.postCart({cart:cart, ccard:ccard, del_address: data.del_address, phone_number: data.phone_number});
-
                             // Add code to keep cart from being posted multiple times.
 
                         }}

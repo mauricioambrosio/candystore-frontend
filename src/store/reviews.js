@@ -32,7 +32,6 @@ const slice = createSlice({
     reviewsRequestFailed: (reviews, action) => {
       reviews.loading = false;
       console.log(action.payload);
-      window.alert(action.payload);
     }
   },
 });

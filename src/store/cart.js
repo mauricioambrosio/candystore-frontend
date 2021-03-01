@@ -11,7 +11,7 @@ const slice = createSlice({
   reducers: {
     // action => action handler
     cartPosted: (cart, action) => {
-        cart.length = 0;        
+        cart.length = 0;  
     },
     editedInCart: (cart, action) => {
         const toEdit = action.payload;
@@ -25,7 +25,6 @@ const slice = createSlice({
         }
     },
     addedToCart: (cart, action) => {
-        
         const newItem = action.payload;
         const newItemKey = genItemKey(newItem);
 
@@ -82,7 +81,6 @@ export const postCart = (cart) => (dispatch, getState) => {
       },
     };
   }
-
 
   return dispatch(
     apiCallBegan({

@@ -27,7 +27,6 @@ const slice = createSlice({
     ordersRequestFailed: (orders, action) => {
       orders.list = [];
       orders.loading = false;
-      window.alert(action.payload);
     },
     statsRequested: (orders, action) => {
         orders.statsLoading = true;
@@ -39,7 +38,7 @@ const slice = createSlice({
     statsRequestFailed: (orders, action) => {
       orders.stats = {};
       orders.statsLoading = false;
-      window.alert(action.payload);
+      console.log(action.payload);
     }
   },
 });

@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {Row, Col, Container} from "react-bootstrap";
 import ColoredLine from "./common/coloredLine";
 import {getMyOrders} from "../store/myOrders";
-import {getCurrentUser} from "../store/auth";
+import {getCurrentUser, isEmployee, isLoggedIn} from "../store/auth";
 import OrderCard from "./orderCard";
 import {connect} from "react-redux";
 
@@ -23,6 +23,7 @@ class MyOrders extends Component {
     }
 
     render() { 
+        if (!isLoggedIn() || isEmployee()) return (window.location = "/");
         return (             
             <Container style={{maxWidth:600}}>
                 <h3>My Orders</h3>
