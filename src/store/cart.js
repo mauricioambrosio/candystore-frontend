@@ -53,7 +53,9 @@ const slice = createSlice({
         cart.splice(0, cart.length);
     },
     cartPostFailed: (cart, action) => {
+        window.alert(action.payload);
         console.log(action.payload);
+        window.location.reload();
     }
   },
 });
@@ -87,7 +89,8 @@ export const postCart = (cart) => (dispatch, getState) => {
       url: "/orders",
       method: "post",
       data: cart,
-      onSuccess: cartPosted.type
+      onSuccess: cartPosted.type,
+      onError: cartPostFailed.type
     })
   );
 };

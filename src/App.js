@@ -63,7 +63,7 @@ class App extends Component {
                 <Route path="/not-found" component={NotFound} />
 
 
-                <Redirect exact from="/" to= {isEmployee() ? "/orders" : "/products"} />
+                <Redirect exact from="/" to= {isEmployee() ? "/stats" : "/products"} />
 
                 <Redirect to="/not-found" />
 

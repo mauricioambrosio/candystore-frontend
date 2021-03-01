@@ -25,6 +25,7 @@ const slice = createSlice({
     myOrdersRequestFailed: (myOrders, action) => {
       myOrders.list = [];
       myOrders.loading = false;
+      window.alert(action.payload);
     }
   },
 });

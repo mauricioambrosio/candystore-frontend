@@ -97,9 +97,8 @@ class Cart extends Form {
                 {this.renderInput("del_address", DELIVERY_ADDRESS, false)}
                 {this.renderInput("phone_number", PHONE_NUMBER, false)}
 
-                {this.renderInput("cc_number", CREDICT_CARD_NUMBER, false )}
-                                    
 
+                {/* {this.renderInput("cc_number", CREDICT_CARD_NUMBER, false )}                  
                 <FormDatePicker
                     name={"cc_expdate"}
                     value={this.state.data["cc_expdate"]}
@@ -110,10 +109,9 @@ class Cart extends Form {
                     format="YYYY/MM"
                     disabled={false}
                 />
-
-
-                {this.renderInput("cc_cvv", CVV, false)}
+                {this.renderInput("cc_cvv", CVV, false)} */}
                                 
+                <h5 className="text-center">Payment is made upon delivery.</h5>
                 
                 <div className="card mt-4 mb-3">
                     <button className="btn-primary rounded p-2"

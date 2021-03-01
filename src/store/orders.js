@@ -27,6 +27,7 @@ const slice = createSlice({
     ordersRequestFailed: (orders, action) => {
       orders.list = [];
       orders.loading = false;
+      window.alert(action.payload);
     },
     statsRequested: (orders, action) => {
         orders.statsLoading = true;
@@ -38,6 +39,7 @@ const slice = createSlice({
     statsRequestFailed: (orders, action) => {
       orders.stats = {};
       orders.statsLoading = false;
+      window.alert(action.payload);
     }
   },
 });
@@ -70,8 +72,6 @@ export const updateOrderStatus = (id, status) => (dispatch, getState) => {
       method: "put",
       data: {status: status},
       onSuccess: orderStatusUpdated.type,
-      //   onStart: bugsRequested.type,
-      //   onError: bugsRequestFailed.type,
     })
   );
 }

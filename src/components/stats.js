@@ -7,6 +7,8 @@ import {connect} from "react-redux";
 import {getStats} from "../store/orders";
 
 import products from "../store/products";
+import {isEmployee} from "../store/auth";
+
 
 import Chart from "react-google-charts"; 
 
@@ -19,7 +21,9 @@ class Stats extends Component {
     }
 
     render() { 
-        
+
+        if (!isEmployee()) return (window.location = "/");
+
         let productStats = [
             ['Product', 'Sold'], 
         ];
@@ -95,7 +99,7 @@ class Stats extends Component {
                                 loader={<div>Loading Chart</div>}
                                 data={orderStatsMonth}
                                 options={{
-                                    title: 'Orders Last Month Daily',
+                                    title: 'Orders Last Month, Daily',
                                 }}
                                 rootProps={{ 'data-testid': '1' }}
                             />
@@ -112,7 +116,7 @@ class Stats extends Component {
                                 loader={<div>Loading Chart</div>}
                                 data={orderStatsYear}
                                 options={{
-                                    title: 'Orders Last Year Monthly',
+                                    title: 'Orders Last Year, Monthly',
                                 }}
                                 rootProps={{ 'data-testid': '1' }}
                             />

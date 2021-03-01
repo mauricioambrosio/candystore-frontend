@@ -72,6 +72,14 @@ const NavBar = ({currentUser, cart}) => {
           
           {isEmployee()? <NavLink
             className="nav-item nav-link font-weight-bold text-dark"
+            to="/stats"
+          >
+            <i className="fa fa-pie-chart" aria-hidden="true" /> {STATISTICS}
+          </NavLink>: null}
+
+
+          {isEmployee()? <NavLink
+            className="nav-item nav-link font-weight-bold text-dark"
             to="/orders"
           >
             <i className="fa fa-shopping-basket" aria-hidden="true" /> {ORDERS}
@@ -85,14 +93,7 @@ const NavBar = ({currentUser, cart}) => {
           >
             <i className="fa fa-th-list" aria-hidden="true" /> {INVENTORY}
           </NavLink>: null}
-
-          {isEmployee()? <NavLink
-            className="nav-item nav-link font-weight-bold text-dark"
-            to="/stats"
-          >
-            <i className="fa fa-pie-chart" aria-hidden="true" /> {STATISTICS}
-          </NavLink>: null}
-
+          
           <NavLink
             className="nav-item nav-link font-weight-bold text-dark"
             to="/products"

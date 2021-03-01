@@ -17,5 +17,4 @@ export default combineReducers({
   reviews: reviewsReducer,
   orders: ordersReducer,
   myOrders: myOrdersReducer
-  // users: usersReducer,
 });
