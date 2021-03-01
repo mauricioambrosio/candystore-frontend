@@ -31,7 +31,7 @@ class ProductCard extends Component{
 
 
         return (
-        <div className="card rounded shadow mb-4 mr-4" style={{width: 200, minWidth:200}}>            
+        <div className="card rounded shadow mb-4 mr-4" style={{width: 240, minWidth:200}}>            
             <Link to={`/productPage/${product.pid}`}>
                 <img className="card-img-top" 
                     src="/images/product_default_image.jpg" 
@@ -50,14 +50,14 @@ class ProductCard extends Component{
                         size="small"
                         readOnly
                     />: null}
-                </Link>
+                </Link> 
                 
                 <Col>
-                    <button  className="btn btn-primary" 
-                    onClick = {
-                        ()=>{
-                            this.handleAddToCart(product);
-                        }
+                    <button  className="btn btn-primary mr-2" 
+                        onClick = {
+                            ()=>{
+                                this.handleAddToCart(product);
+                            }
                     }>Add to cart</button>
 
                     <input className="mt-2 rounded" 
