@@ -1,5 +1,5 @@
 // sort list based based on elements or based on a field
-function sortList(list, reverse = false, field = undefined) {
+export default function sortList(list, reverse = false, field = undefined) {
   // return if list is undefined
   if (!list) return list;
 
@@ -41,4 +41,3 @@ function sortList(list, reverse = false, field = undefined) {
   return newList;
 }
 
-module.exports = sortList;

@@ -15,11 +15,13 @@ const CUSTOMIZED_ID = 0;
 class Flavors extends Component {
     state = {addedFlavors:[], amount: 1}
 
+    async componentDidMount(){
+        await this.props.getFlavors();
+    }
 
     handleAddToCart(custom, flavors){
         
         const flavorsSorted = sortList(flavors, false, "name");
-
 
         const price = custom.price + flavors.map(flavor => flavor.price).reduce((a,b)=>a+b, 0);
 
@@ -46,10 +48,11 @@ class Flavors extends Component {
                         alt="Card image cap" 
                     />
                     <h3 className="mt-3">{`Customize ($${totalPrice.toFixed(2)})`}</h3>
+                    
+                    {this.props.loading? <h4 className="text-center">Loading...</h4>:null}
+                    
                     <Row className="pl-3 mt-3">
-
-                        {this.props.flavors.map((flavor) => {
-                            
+                        {this.props.flavors.map((flavor) => {   
                             return (
                                 flavor.active? <div key={flavor.fid} className="mr-3">
                                                         
@@ -64,14 +67,11 @@ class Flavors extends Component {
                                                 if(!updatedAddedFlavors.map(flavor=>flavor.fid).includes(flavor.fid)) updatedAddedFlavors.push(flavor);   
                                             }
                                             else {
-                                                // const index = addedFlavors.indexOf(f=>f.fid === flavor.fid)
-                                                // if(index !== -1) addedFlavors.splice(index,1);
-
                                                 updatedAddedFlavors = updatedAddedFlavors.filter(f=>f.fid !== flavor.fid);
                                             }
                                             this.setState({addedFlavors: updatedAddedFlavors});
-                                        }
-                                    }/>
+                                        }}
+                                    />
 
                                     {" "}
                                     <label htmlFor={flavor.name}>{`${flavor.name}($${flavor.price})`}</label>
@@ -83,7 +83,7 @@ class Flavors extends Component {
                     </Row>
                 </div>    
                         
-                <div className="card-body text-center">
+                <div className="card-body">
                     <Row>
                         <input className="rounded mr-3 mb-2" 
                             type="number" 
@@ -113,7 +113,6 @@ const mapStateToProps = (state) => ({
   });
   
 const mapDispatchToProps = (dispatch) => ({
-    getProducts: () => dispatch(getProducts()),
     getFlavors: () => dispatch(getFlavors()),
     getCurrentUser: () => dispatch(getCurrentUser()),
     addToCart: (product) => dispatch(addToCart(product))
