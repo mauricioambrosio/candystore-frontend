@@ -54,7 +54,7 @@ class Inventory extends Component {
 
                 <Row>
                     <Col>
-                        <Container className="border rounded p-4 mb-4">
+                        <Container className="border rounded p-4 mb-4" style={{minWidth: 300}}>
                             <InventoryForm 
                                 entity="product"
                                 header="Update Products"
@@ -85,7 +85,7 @@ class Inventory extends Component {
                         </Container>
                     </Col>
                     <Col>
-                        <Container className="border rounded p-4 mb-4"> 
+                        <Container className="border rounded p-4 mb-4" style={{minWidth: 300}}> 
                             <InventoryForm 
                                 entity="flavor"
                                 header="Update Flavors"

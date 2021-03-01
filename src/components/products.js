@@ -39,8 +39,8 @@ class Products extends Component {
                     <ColoredLine color="grey" height={1} />
 
                     {this.props.loading? <h4 className="text-center">Loading...</h4>:null}
-
-                    <Row>
+                    
+                    <Row className="d-flex justify-content-center">
                         {this.state.products
                             .filter(product => product.pid!==CUSTOMIZED_ID && product.active)
                             .map(product => <ProductCard key={product.pid} product={product}/>)} 

@@ -52,7 +52,7 @@ class Stats extends Component {
                 
                 <Row>
                     <Col>
-                        <Container className="border rounded p-4 mb-4">
+                        <Container className="border rounded p-4 mb-4" style={{minWidth: 400}}>
                            
                             <Chart
                                 // width={'500px'}
@@ -70,7 +70,7 @@ class Stats extends Component {
                     </Col>
 
                     <Col>
-                        <Container className="border rounded p-4 mb-4">
+                        <Container className="border rounded p-4 mb-4" style={{minWidth: 400}}>
                             <Chart
                                 // width={'500px'}
                                 height={'300px'}
