@@ -167,8 +167,6 @@ export const postReview = (review) => (dispatch, getState) => {
     };
   }
 
-  console.log("review", review);
-
   return dispatch(
     apiCallBegan({
       url: "/reviews",

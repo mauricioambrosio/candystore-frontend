@@ -15,7 +15,6 @@ class Products extends Component {
     state = { 
         currentUser: null,
         products: [],
-        loading: false
      }
 
     async componentDidMount() {
@@ -38,6 +37,8 @@ class Products extends Component {
                     <h3>Menu</h3>
 
                     <ColoredLine color="grey" height={1} />
+
+                    {this.props.loading? <h4 className="text-center">Loading...</h4>:null}
 
                     <Row>
                         {this.state.products

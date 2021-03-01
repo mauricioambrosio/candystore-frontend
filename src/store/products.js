@@ -27,7 +27,6 @@ const slice = createSlice({
     },
     productsRequestFailed: (products, action) => {
       products.loading = false;
-      console.log(action.payload);
     }
   },
 });

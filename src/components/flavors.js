@@ -17,7 +17,6 @@ class Flavors extends Component {
 
 
     handleAddToCart(custom, flavors){
-        console.log(custom);
         
         const flavorsSorted = sortList(flavors, false, "name");
 

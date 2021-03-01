@@ -27,7 +27,6 @@ const slice = createSlice({
     },
     flavorsRequestFailed: (flavors, action) => {
       flavors.loading = false;
-      console.log(action.payload);
     }
   },
 });

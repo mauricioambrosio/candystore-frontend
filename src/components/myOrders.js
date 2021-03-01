@@ -16,8 +16,7 @@ class MyOrders extends Component {
 
         try {
             await this.props.getMyOrders();
-        } catch (err) {
-            
+        } catch (err) {    
             console.log(err);
             return (window.location = "/");
         }

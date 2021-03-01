@@ -119,14 +119,16 @@ class Stats extends Component {
                         </Container>
                     </Col>
                 </Row>
-                <div className="w-100 text-center">
-                    <ColoredLine color="grey" height={1} />
-                    <h5>{`Total Revenue = $${this.props.stats.total_revenue.toFixed(2)}
-                    | Total Number of Orders = ${this.props.stats.n_orders}
-                    | Average Order = $${this.props.stats.average_order.toFixed(2)}`}</h5> 
-                    <ColoredLine color="grey" height={1} />
-                    <br/>
-                </div>
+                {this.props.stats.total_revenue && this.props.stats.average_order
+                    ? <div className="w-100 text-center">
+                        <ColoredLine color="grey" height={1} />
+                        <h5>{`Total Revenue = $${this.props.stats.total_revenue.toFixed(2)}
+                        | Total Number of Orders = ${this.props.stats.n_orders}
+                        | Average Order = $${this.props.stats.average_order.toFixed(2)}`}</h5> 
+                        <ColoredLine color="grey" height={1} />
+                        <br/>
+                    </div>
+                    : null}
             </Container>
         );
     }

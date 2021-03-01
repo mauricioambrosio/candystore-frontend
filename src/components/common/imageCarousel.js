@@ -15,7 +15,6 @@ class ImageCarousel extends Component{
                     <Carousel.Item 
                         key = {image} 
                         onClick = {() => {
-                            console.log(index);
                             return this.props.history.push({
                                 pathname: "/imagesFull",
                                 state: {images: this.props.imageList, currentImage:index}

@@ -52,8 +52,6 @@ class ProfileForm extends Form {
     if (currentUser.phone_number) data.phone_number = currentUser.phone_number;
     if (currentUser.address) data.address = currentUser.address;
     
-    console.log(data);
-
     return data;
   }
 

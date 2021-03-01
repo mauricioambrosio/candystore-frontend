@@ -11,7 +11,6 @@ const slice = createSlice({
   reducers: {
     // action => action handler
     cartPosted: (cart, action) => {
-        console.log(cart);
         cart.length = 0;        
     },
     editedInCart: (cart, action) => {
@@ -27,16 +26,11 @@ const slice = createSlice({
     },
     addedToCart: (cart, action) => {
         
-        console.log(action.payload);
-
         const newItem = action.payload;
         const newItemKey = genItemKey(newItem);
 
         const cartItemKeys = cart.map(item => genItemKey(item));
         
-        console.log(cartItemKeys);
-        console.log(newItemKey);
-
         if (cartItemKeys.includes(newItemKey)) {
             const index = cartItemKeys.indexOf(newItemKey);
             cart[index].amount += newItem.amount; 
@@ -59,7 +53,7 @@ const slice = createSlice({
         cart.splice(0, cart.length);
     },
     cartPostFailed: (cart, action) => {
-      console.log(action.payload);
+        console.log(action.payload);
     }
   },
 });
