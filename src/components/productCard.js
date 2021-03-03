@@ -9,29 +9,41 @@ import {getReviews} from "../store/reviews";
 
 import { connect } from "react-redux";
 
+// the dispatch functions call respective redux dispatch actions
 class ProductCard extends Component{
     state = {amount:1}
 
     async componentDidMount(){
+        // call dispatch action function to get reviews of current product from database
         await this.props.getReviews(this.props.product.pid);
     }
 
     handleAddToCart(product){
+        // call dispatch action function to add product to cart
         this.props.addToCart({...product, flavors:[], amount:this.state.amount});
         this.setState({amount: 1});
     }
 
     render() { 
         const product = this.props.product;
+        
+        // calculate current price based on amount and product price 
         const totalPrice = this.state.amount * product.price;
 
+        // filter current product reviews from list of all reviews
         const currentProductReviews = this.props.reviews.filter(review => review.pid === product.pid);
+        
+        // get review scores
         const reviewRatings = currentProductReviews.map(review => review.score); 
+        
+        // calculate average review score
         const avgRating = reviewRatings.reduce((a, b) => a + b, 0) / reviewRatings.length;
 
 
         return (
         <div className="card rounded shadow mb-4 mr-4" style={{width: 240, minWidth:200}}>            
+            
+            {/* go to product page on click */}
             <Link to={`/productPage/${product.pid}`}>
                 <img className="card-img-top" 
                     src="/images/product_default_image.jpg" 
@@ -41,6 +53,8 @@ class ProductCard extends Component{
             </Link>
             
             <div className="card-body text-center">
+
+                {/* go to product page on click */}
                 <Link to={`/productPage/${product.pid}`}>
                     <h5 className="card-title">{product.name} <span className="badge badge-secondary"> {"$"+totalPrice.toFixed(2)}</span></h5>
                     {avgRating >= 1 && avgRating <= 5? <Rating
@@ -53,6 +67,8 @@ class ProductCard extends Component{
                 </Link> 
                 
                 <Col>
+
+                    {/* button to add product to cart */}
                     <button  className="btn btn-primary mr-2" 
                         onClick = {
                             ()=>{
@@ -60,6 +76,7 @@ class ProductCard extends Component{
                             }
                     }>Add to cart</button>
 
+                    {/* input to choose amount to be added to cart */}
                     <input className="mt-2 rounded" 
                         type="number" 
                         style={{width:60}} 
@@ -76,15 +93,17 @@ class ProductCard extends Component{
     }
 }
 
+// map redux store state to this.props
 const mapStateToProps = (state) => ({
     cart: state.entities.cart,
     reviews: state.entities.reviews.list
   });
   
+// map redux store dispatch functions to this.props
 const mapDispatchToProps = (dispatch) => ({
     addToCart: (product) => dispatch(addToCart(product)),
     getReviews: (pid) => dispatch(getReviews(pid))
-    // updateCurrentUser: (data) => dispatch(updateCurrentUser(data)),
 });
 
+// wrap component with react-redux connect wrapper
 export default connect(mapStateToProps, mapDispatchToProps)(ProductCard);

@@ -25,9 +25,9 @@ import configureStore from "./store/configureStore";
 
 import NavBar from "./components/navBar";
 
-
 import './App.css';
 
+// used to make redux store persistent 
 import { PersistGate } from "redux-persist/integration/react";
 
 
@@ -38,11 +38,12 @@ class App extends Component {
   render(){
     return (
       <Provider store={store}>
+        
+        {/* used to make redux store persistent */}
         <PersistGate loading={null} persistor={persistor}>
           <React.Fragment>
-            
             <NavBar/>
-            
+
             <div>
 
               <Switch>
@@ -57,14 +58,13 @@ class App extends Component {
                 <Route path="/profile" component={Profile} />
                 <Route path="/myorders" component={MyOrders} />
                 <Route path="/cart" component={Cart}/>
-
                 <Route path="/logout" component={Logout} />
-                
                 <Route path="/not-found" component={NotFound} />
 
-
+                {/* if authenticated user is employee, redirect home to statistics page, else redirect to products page */}
                 <Redirect exact from="/" to= {isEmployee() ? "/stats" : "/products"} />
-
+                
+                {/* redirect non found route to not found */}
                 <Redirect to="/not-found" />
 
               </Switch>

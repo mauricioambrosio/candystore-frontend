@@ -8,6 +8,7 @@ const slice = createSlice({
   initialState: { list: [], loading: false},
   reducers: {
     // action => action handler
+    // add posted product
     productPosted: (products, action) => {
         products.list.push(action.payload);
     },
@@ -15,6 +16,7 @@ const slice = createSlice({
         const productIds = products.list.map(product => product.pid); 
         const index = productIds.indexOf(action.payload.pid);
 
+        // remove existing flavor and add edited one
         products.list = products.list.filter(product => (product.pid !== action.payload.pid));
         products.list.splice(index, 0, action.payload);
     },
@@ -32,7 +34,14 @@ const slice = createSlice({
   },
 });
 
-export const { productPosted, productsRequested, productsReceived, productsRequestFailed, productEdited, productsCurrentPageUpdated } = slice.actions;
+// expose action handlers
+export const { 
+  productPosted, 
+  productsRequested, 
+  productsReceived, 
+  productsRequestFailed, 
+  productEdited, 
+  productsCurrentPageUpdated } = slice.actions;
 
 
 export const getProducts = () =>
@@ -62,8 +71,6 @@ export const getProducts = () =>
         url: `/products/${product.pid}`,
         method: product.active?"delete":"post",
         onSuccess: productEdited.type,
-        //   onStart: bugsRequested.type,
-        //   onError: bugsRequestFailed.type,
       })
     );
   }
@@ -87,8 +94,6 @@ export const getProducts = () =>
         method: "put",
         data: {name:product.name, price:product.price},
         onSuccess: productEdited.type,
-        //   onStart: bugsRequested.type,
-        //   onError: bugsRequestFailed.type,
       })
     );
   };
@@ -112,8 +117,6 @@ export const postProduct = (product) => (dispatch, getState) => {
       method: "post",
       data: product,
       onSuccess: productPosted.type,
-      //   onStart: bugsRequested.type,
-      //   onError: bugsRequestFailed.type,
     })
   );
 };

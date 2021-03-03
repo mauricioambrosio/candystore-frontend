@@ -2,6 +2,7 @@ import React from "react";
 import moment from "moment";
 import Rating from '@material-ui/lab/Rating';
 
+// review card shows review score, review text, and timestamp
 const ReviewCard = ({ data }) => {
   return (
     <div className="media mb-2 pt-3 pb-3 border-top">

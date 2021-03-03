@@ -8,7 +8,6 @@ const slice = createSlice({
   initialState: { list: [], loading: false},
   reducers: {
     // action => action handler
-
     myOrdersRequested: (myOrders, action) => {
       myOrders.loading = true;
     },
@@ -16,6 +15,7 @@ const slice = createSlice({
       myOrders.list = action.payload;
       myOrders.loading = false;
     },
+    // change order status to cancelled
     orderCancelled: (myOrders, action) => {
       const orderIds = myOrders.list.map(order => order.uoid); 
       const index = orderIds.indexOf(action.payload.uoid);
@@ -30,7 +30,13 @@ const slice = createSlice({
   },
 });
 
-export const { myOrdersRequested, myOrdersReceived, orderCancelled, myOrdersRequestFailed } = slice.actions;
+// expose action handlers
+export const { 
+  myOrdersRequested, 
+  myOrdersReceived, 
+  orderCancelled, 
+  myOrdersRequestFailed } = slice.actions;
+
 
 export const getMyOrders = () =>
   apiCallBegan({
@@ -47,8 +53,6 @@ dispatch(
     url: `/orders/cancel/${id}`,
     method: "put",
     onSuccess: orderCancelled.type,
-    //   onStart: bugsRequested.type,
-    //   onError: bugsRequestFailed.type,
   })
 );
 

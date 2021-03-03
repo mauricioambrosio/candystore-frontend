@@ -6,10 +6,7 @@ import reviewsReducer from "./reviews";
 import ordersReducer from "./orders";
 import myOrdersReducer from "./myOrders";
 
-// import bugsReducer from "./bugs";
-// import projectsReducer from "./projects";
-// import usersReducer from "./users";
-
+// aggregate reducers into a single one
 export default combineReducers({
   products: productsReducer,
   flavors: flavorsReducer,

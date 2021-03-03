@@ -15,6 +15,7 @@ const LAST_NAME = "Last name";
 const PASSWORD = "Password";
 const REGISTER = "Register";
 
+// the dispatch functions call respective redux dispatch actions
 class RegisterForm extends Form {
   state = {
     data: {
@@ -32,8 +33,8 @@ class RegisterForm extends Form {
     firstname: Joi.string().min(1).max(64).required().label(FIRST_NAME),
     lastname: Joi.string().min(1).max(64).required().label(LAST_NAME),
     
-    
-    //password must include at least 8 characters, 1 lowercase, 1 uppercase, and 1 digit
+    /* commented to ignore password requirements */
+    /* password must include at least 8 characters, 1 lowercase, 1 uppercase, and 1 digit */
     // password: Joi.string()
     //   .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/)
     //   .min(8)
@@ -57,12 +58,12 @@ class RegisterForm extends Form {
 
   doSubmit = async () => {
     try {
-      ///
+      // register user
       await this.props.register(this.state.data);
       this.props.history.replace({
         pathname: "/login",
       });
-      ///
+      
     } catch (e) {
       if (e.response && e.response.status === 400) {
         const errors = { ...this.state.erros };
@@ -73,6 +74,7 @@ class RegisterForm extends Form {
   };
 
   render() {
+    // if user is authenticated, go back to home page
     if (isLoggedIn()) return <Redirect to="/" />;
 
     return (
@@ -94,12 +96,12 @@ class RegisterForm extends Form {
 }
 
 const mapStateToProps = (state) => ({
-  // currentUser: state.auth.currentUser,
-  // token: state.auth.token,
 });
 
+// map redux store dispatch functions to this.props
 const mapDispatchToProps = (dispatch) => ({
   register: (user) => dispatch(register(user)),
 });
 
+// wrap component with react-redux connect wrapper
 export default connect(mapStateToProps, mapDispatchToProps)(RegisterForm);

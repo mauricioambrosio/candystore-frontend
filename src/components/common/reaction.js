@@ -1,5 +1,6 @@
 import React from "react";
 
+// component to allow user to react with posts
 const Reaction = ({ isActive, activeIcon, inactiveIcon, onClick }) => {
   return (
     <>

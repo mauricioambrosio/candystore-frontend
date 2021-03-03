@@ -1,12 +1,14 @@
+// this module encapsulates the axios http library 
 import axios from "axios";
 import { getJwtFromLocalStorage, AUTH_TOKEN_HEADER } from "../auth";
 
-// import logger from "./logService";
-
-// axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+// set base url based on environment
 setBaseURL(process.env.REACT_APP_API_URL);
+
+// set json web token header for authentication if available
 setJwt(getJwtFromLocalStorage());
 
+// response interceptor, null if no error, run function if error
 axios.interceptors.response.use(null, (error) => {
   const expectedError =
     error.response &&
@@ -14,31 +16,27 @@ axios.interceptors.response.use(null, (error) => {
     error.response.status < 500;
 
   if (!expectedError) {
-    // console.log("Logging the error", error);
-    // logger.log(error);
-
-    // toast.error("An unexpected error ocurred.");
-    console.log("An unexpected error ocurred.");
+    const errorMessage = "An unexpected error ocurred.";  
+    console.log(errorMessage);
     console.log(error.response);
-    
+    window.alert(errorMessage + " " + error.response);
   }
 
   return Promise.reject(error);
 });
 
+// export functions to interact with http module
 export default {
   request: axios.request,
-  //   get: axios.get,
-  //   post: axios.post,
-  //   put: axios.put,
-  //   delete: axios.delete,
   setJwt,
 };
 
+// set json web token header for authentication
 function setJwt(jwt) {
   axios.defaults.headers.common[AUTH_TOKEN_HEADER] = jwt;
 }
 
+// set base url for axios
 function setBaseURL(url) {
   axios.defaults.baseURL = url;
 }

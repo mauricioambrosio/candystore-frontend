@@ -12,13 +12,15 @@ import InventoryForm from "./inventoryForm";
 
 import { connect } from "react-redux";
 
-
+// this allows employees to add, remove or edit the available products and flavors
 class Inventory extends Component {
+    // state for current selected product or flavor
     state = { 
         product:{pid:"", name:"", price:"", active:""},
         flavor:{fid:"", name:"", price:"", active:""}
     };
 
+    // call redux store functions to get products and flavors from database
     async componentDidMount() {
         try{
             await this.props.getProducts();
@@ -29,12 +31,14 @@ class Inventory extends Component {
         }
     }
 
+    // handle input text change
     handleChange(entity, field, value){
         const newState = {...this.state};
         newState[entity][field] = value;
         this.setState(newState);
     }
 
+    // clear fields
     handleClear(entity, idField){
         const newState = {...this.state};
         newState[entity][idField] = "";
@@ -45,6 +49,7 @@ class Inventory extends Component {
     }
 
     render() { 
+        // if no employee is authenticated, go back to home page
         if (!isEmployee()) return (window.location = "/");
 
         return ( 
@@ -55,6 +60,8 @@ class Inventory extends Component {
                 <Row>
                     <Col>
                         <Container className="border rounded p-4 mb-4" style={{minWidth: 300}}>
+                            
+                            {/* form to add/remove/edit products  */}
                             <InventoryForm 
                                 entity="product"
                                 header="Update Products"
@@ -67,6 +74,7 @@ class Inventory extends Component {
                                 handleClear={(entity, idField) => this.handleClear(entity, idField)}
                             />
 
+                            {/* show list of products from redux store  */}
                             {this.props.products.map(product => 
                                 <div className="w-100 border rounded mb-3 pl-2 pt-2" 
                                     type="button"
@@ -86,6 +94,8 @@ class Inventory extends Component {
                     </Col>
                     <Col>
                         <Container className="border rounded p-4 mb-4" style={{minWidth: 300}}> 
+                            
+                            {/* form to add/remove/edit flavors  */}
                             <InventoryForm 
                                 entity="flavor"
                                 header="Update Flavors"
@@ -98,6 +108,7 @@ class Inventory extends Component {
                                 handleClear={(entity, idField) => this.handleClear(entity, idField)}
                             />
 
+                            {/* show list of flavors from redux store  */}
                             {this.props.flavors.map(flavor => 
                                 <div className="w-100 border rounded mb-3 pl-2 pt-2" 
                                     key={flavor.fid} 
@@ -118,16 +129,16 @@ class Inventory extends Component {
         );
     }
 }
-
+// map redux store state to this.props
 const mapStateToProps = (state) => ({
     currentUser: state.auth.currentUser,
     products: state.entities.products.list,
     flavors: state.entities.flavors.list,
     productsLoading: state.entities.products.loading,
     flavorsLoading: state.entities.flavors.loading,
-    // ingredientsLoading: state.entities.ingredients.loading,
   });
-  
+
+// map redux store dispatch functions to this.props
 const mapDispatchToProps = (dispatch) => ({
     getProducts: () => dispatch(getProducts()),
     postProduct: (product) => dispatch(postProduct(product)),
@@ -143,4 +154,5 @@ const mapDispatchToProps = (dispatch) => ({
 
   });
 
+// wrap component with react-redux connect wrapper
 export default connect(mapStateToProps, mapDispatchToProps)(Inventory);

@@ -1,3 +1,7 @@
+// provide array of genders
 export function getGenders() {
-    return [{ _id: "M", name: "M" }, { _id: "F", name: "F" }];
+    return [
+        { id: "M", name: "M" }, 
+        { id: "F", name: "F" }
+    ];
 }

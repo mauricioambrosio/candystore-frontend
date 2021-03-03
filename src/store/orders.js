@@ -9,8 +9,8 @@ const slice = createSlice({
   name: "orders",
   initialState: { list: [], loading: false, stats:{}, statsLoading: false},
   reducers: {
-    // action => action handler
 
+    // action => action handler
     ordersRequested: (orders, action) => {
       orders.loading = true;
     },
@@ -18,6 +18,7 @@ const slice = createSlice({
       orders.list = action.payload;
       orders.loading = false;
     },
+    // change order status
     orderStatusUpdated: (orders, action) => {
         const orderIds = orders.list.map(order => order.uoid); 
         const index = orderIds.indexOf(action.payload.uoid);
@@ -43,8 +44,15 @@ const slice = createSlice({
   },
 });
 
-export const { ordersRequested, ordersReceived, orderStatusUpdated, ordersRequestFailed, statsRequested, statsReceived, statsRequestFailed } = slice.actions;
-
+// expose action handlers
+export const { 
+  ordersRequested, 
+  ordersReceived, 
+  orderStatusUpdated, 
+  ordersRequestFailed, 
+  statsRequested, 
+  statsReceived, 
+  statsRequestFailed } = slice.actions;
 
 export const getStats = () =>
   apiCallBegan({

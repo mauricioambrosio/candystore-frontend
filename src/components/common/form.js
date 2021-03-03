@@ -3,24 +3,27 @@ import Input from "./input";
 import Select from "./select";
 import FormDatePicker from "./formDatePicker";
 import FormTimePicker, { TIME_FORMAT } from "./formTimePicker";
-import FormImageUploader from "./formImageUploader";
-import TextArea from "./textArea";
 
+import TextArea from "./textArea";
 import {Switch} from "antd";
 
-import ImageArea from "./imageArea";
-
 import TagsInput from "./tagsInput";
-
 import BaseJoi from "joi-browser";
 import ImageExtention from "joi-image-extension";
 
-const Joi = BaseJoi.extend(ImageExtention);
 
 const IMAGE_UPLOADER_NAME = "pictures";
 
+// add image extension to joi
+const Joi = BaseJoi.extend(ImageExtention);
+
+// form components can inherit this class and have access to 
+// its render, handle, and validate methods.
+// all fields have to be included in state.data dictionary and 
+// an empty state.errors dictionary have to be available  
 class Form extends Component {
   
+  // validate all fields in state.data and add messages to state.errors
   validate = () => {
     const options = { abortEarly: false };
     const { error } = Joi.validate(this.state.data, this.schema, options);
@@ -33,6 +36,7 @@ class Form extends Component {
     return errors;
   };
 
+  // validate specific field and add message to state.errors
   validateProperty = ({ name, value }) => {
     const obj = { [name]: value };
     const schema = { [name]: this.schema[name] };
@@ -41,9 +45,10 @@ class Form extends Component {
     return error ? error.details[0].message : null;
   };
 
+  
   handleSubmit = (e) => {
     e.preventDefault();
-
+    // validate all fields
     const errors = this.validate();
     this.setState({ errors: errors || {} });
 
@@ -52,47 +57,52 @@ class Form extends Component {
     this.doSubmit();
   };
 
+  // handle value change in inputs
   handleChange = ({ currentTarget: input }) => {
     const errors = { ...this.state.errors };
+    // validate property
     const errorMessage = this.validateProperty(input);
 
     if (errorMessage) errors[input.name] = errorMessage;
     else delete errors[input.name];
 
+    // change input value in state.data
     const data = { ...this.state.data };
     data[input.name] = input.value;
     this.setState({ data, errors });
   };
 
+  // handle value change in date and time pickers 
   handleDatePick = (name, date, defaultValue) => {
     
     if (date) date = date.toDate();
     else date = defaultValue;
 
     const errors = { ...this.state.errors };
+    // validate property
     const errorMessage = this.validateProperty({ name: name, value: date });
 
     if (errorMessage) errors[name] = errorMessage;
     else delete errors[name];
-
+    // change date or time picker value in state.data
     const data = { ...this.state.data };
     data[name] = date;
-
     this.setState({ data, errors });
   };
 
+  // handle value change in tags input
   handleTagsChange = (name, tags) => {
     const errors = { ...this.state.errors };
+    // validate property
     const errorMessage = this.validateProperty({ name: name, value: tags });
 
     if (errorMessage) errors[name] = errorMessage;
     else delete errors[name];
-
+    // change tags input value in state.data
     const data = { ...this.state.data };
     data[name] = tags;
     return this.setState({ data, errors });
   };
-
 
 
   renderButton(label, disabled = true, colorString = "btn-primary") {
@@ -108,7 +118,6 @@ class Form extends Component {
   }
 
   renderSwitch(name, label, callback=undefined) {
-
     return (
     <div>
       <label htmlFor={name}>{label}</label> 
@@ -128,7 +137,7 @@ class Form extends Component {
     </div>);
   }
 
-  
+  // input for array variable storing multiple elements 
   renderTagsInput(
     name,
     label,
@@ -152,6 +161,7 @@ class Form extends Component {
     );
   }
 
+  // multiline input
   renderTextArea(
     name,
     label,
@@ -175,61 +185,6 @@ class Form extends Component {
     );
   }
 
-  handlePicturesChange = (files) => {
-    const errors = { ...this.state.errors };
-    const errorMessage = this.validateProperty({
-      name: IMAGE_UPLOADER_NAME,
-      value: files,
-    });
-    if (errorMessage) errors[IMAGE_UPLOADER_NAME] = errorMessage;
-    else delete errors[IMAGE_UPLOADER_NAME];
-
-    const data = { ...this.state.data };
-    data[IMAGE_UPLOADER_NAME] = [...files];
-    
-    this.setState({ data, errors });
-  };
-
-
-  renderImageArea(name, label, uriList){
-    if (uriList.length<1) return null;
-    let deletedImages = this.state.deletedImages;
-    
-    return (
-      <ImageArea 
-        name = {name}
-        label = {label}
-        uriList = {uriList}
-        deletedImages = {deletedImages}
-        onChangeCallback = {(deletedImages) => this.setState({deletedImages})}
-      />
-    )
-  }
-
-  renderImageUploader(
-    buttonText,
-    label,
-    maxFileSize = 10485760,
-    singleImage = false,
-    imgExtension = [".jpg", ".jpeg", ".png"],
-    fileTypeError = "is not supported file extension"
-  ) {
-    const { errors } = this.state;
-
-    return (
-      <FormImageUploader
-        name={IMAGE_UPLOADER_NAME}
-        label={label}
-        singleImage = {singleImage}
-        imgExtension={imgExtension}
-        maxFileSize={maxFileSize}
-        buttonText={buttonText}
-        fileTypeError={fileTypeError}
-        onChange={this.handlePicturesChange}
-        error={errors["pictures"]}
-      />
-    );
-  }
 
   renderDatePicker(
     name,

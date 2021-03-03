@@ -13,6 +13,7 @@ export const TagsInput = ({
 }) => {
   const [inputValue, setInputValue] = useState("");
 
+  // render input as interface 
   function renderInput() {
     return (
       <input
@@ -27,6 +28,7 @@ export const TagsInput = ({
       />
     );
   }
+  // render select as interface
   function renderSelect() {
     return (
       <select
@@ -48,11 +50,13 @@ export const TagsInput = ({
     );
   }
 
+  // render tags
   function renderTags() {
     return (
       <div className="tags-input border rounded">
         {options ? renderSelect() : renderInput()}
 
+        {/* add element as tag */}
         <i
           role="button"
           className="fa fa-plus-circle text-secondary mr-2 fa-2x"
@@ -64,7 +68,7 @@ export const TagsInput = ({
             }
           }}
         />
-        
+        {/* show tags with remove button */}
         {value.map((tag, index) => (
           <span key={index}>
             <span>{tag}</span>
@@ -92,6 +96,7 @@ export const TagsInput = ({
 
       {renderTags()}
 
+      {/* show validate error message   */}
       {error && <div className="alert alert-danger">{error}</div>}
     </div>
   );

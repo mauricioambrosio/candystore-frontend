@@ -2,6 +2,7 @@ import React from "react";
 import TextArea from "./common/textArea";
 import Rating from '@material-ui/lab/Rating';
 
+// component for posting reviews
 const ReviewForm = ({ onSubmit, text, rating, height, onChange, onRate, onCancel }) => {
   
   return (
@@ -34,9 +35,7 @@ const ReviewForm = ({ onSubmit, text, rating, height, onChange, onRate, onCancel
         onClick={onCancel}
       >
         Clear
-      </button>
-
-      
+      </button> 
     </div>
   );
 };

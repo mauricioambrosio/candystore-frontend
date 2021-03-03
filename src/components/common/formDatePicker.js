@@ -1,5 +1,4 @@
 import React from "react";
-// import DatePicker from 'react-date-picker';
 import moment from "moment";
 import { DatePicker } from "antd";
 
@@ -15,6 +14,8 @@ const FormDatePicker = ({ name, label, error, value, ...rest }) => {
                 className="form-control"
                 value={moment(value)}
             />
+
+            {/* show validate error message */}
             {error && <div className="alert alert-danger">{error}</div>}
         </div>
     );

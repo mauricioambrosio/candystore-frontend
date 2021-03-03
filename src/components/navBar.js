@@ -25,6 +25,7 @@ const LOGOUT = "Logout";
 const LOGIN = "Login";
 const REGISTER = "Register";
 
+
 const NavBar = ({currentUser, cart}) => {
     
   return (
@@ -34,13 +35,7 @@ const NavBar = ({currentUser, cart}) => {
       data-toggle="collapse"
       data-target=".navbar-collapse.show"
     >
-      {/* <Link className="navbar-brand" to="/">
-        <i
-          className="fa fa-university fa-lg text-secondary mr-0"
-          aria-hidden="true"
-        ></i>
-      </Link> */}
-
+      {/* home button */}
       <Link className="navbar-brand mt-2 ml-3 justify-content-start" to="/">
         <div className="row">
           <h4 className="justify-content-md-start">
@@ -49,6 +44,7 @@ const NavBar = ({currentUser, cart}) => {
         </div>
       </Link>
 
+      {/* button to toggle showing/hiding navbar menu  */}
       <button
         className="navbar-toggler bg-secondary"
         type="button"
@@ -60,6 +56,7 @@ const NavBar = ({currentUser, cart}) => {
       >
         <span className="navbar-toggler-icon"></span>
       </button>
+
       <div
         className="collapse navbar-collapse justify-content-end"
         id="navbarNav"
@@ -70,6 +67,7 @@ const NavBar = ({currentUser, cart}) => {
             <i className="fa fa-home" aria-hidden="true" /> {HOME}
           </NavLink> */}
           
+          {/* if an employee is authenticated, show statistics option  */}
           {isEmployee()? <NavLink
             className="nav-item nav-link font-weight-bold text-dark"
             to="/stats"
@@ -77,7 +75,7 @@ const NavBar = ({currentUser, cart}) => {
             <i className="fa fa-pie-chart" aria-hidden="true" /> {STATISTICS}
           </NavLink>: null}
 
-
+          {/* if an employee is authenticated, show orders option  */}
           {isEmployee()? <NavLink
             className="nav-item nav-link font-weight-bold text-dark"
             to="/orders"
@@ -85,8 +83,7 @@ const NavBar = ({currentUser, cart}) => {
             <i className="fa fa-shopping-basket" aria-hidden="true" /> {ORDERS}
           </NavLink>: null}
           
-
-
+          {/* if an employee is authenticated, show inventory option  */}
           {isEmployee()? <NavLink
             className="nav-item nav-link font-weight-bold text-dark"
             to="/inventory"
@@ -94,12 +91,14 @@ const NavBar = ({currentUser, cart}) => {
             <i className="fa fa-th-list" aria-hidden="true" /> {INVENTORY}
           </NavLink>: null}
           
+
           <NavLink
             className="nav-item nav-link font-weight-bold text-dark"
             to="/products"
           >
             <i className="fa fa-bars" aria-hidden="true" /> {MENU}
           </NavLink>
+
 
           <NavLink
             className="nav-item nav-link font-weight-bold text-dark"
@@ -108,6 +107,7 @@ const NavBar = ({currentUser, cart}) => {
             <i className="fa fa-cubes" aria-hidden="true" /> {CUSTOMIZE}
           </NavLink>
 
+          {/* if customer is authenticated show my orders option */}
           {isLoggedIn() && !isEmployee()? (
             <NavLink
               className="nav-item nav-link font-weight-bold text-dark"
@@ -117,6 +117,7 @@ const NavBar = ({currentUser, cart}) => {
             </NavLink>
           ) : null}
           
+
           {cart.length >= 1?<NavLink
             className="nav-item nav-link font-weight-bold text-dark"
             to="/cart"
@@ -124,6 +125,7 @@ const NavBar = ({currentUser, cart}) => {
             <i className="fa fa-shopping-cart" aria-hidden="true" /> {CART}
           </NavLink>:null}    
 
+          {/* if user is authenticated, show profile option */}
           {isLoggedIn() ? (
             <NavLink
               className="nav-item nav-link font-weight-bold text-dark"
@@ -141,12 +143,11 @@ const NavBar = ({currentUser, cart}) => {
             <i className="fa fa-question" aria-hidden="true" /> Como Usar
           </NavLink> */}
 
-          {/* {!loggedIn ? (
-            <NavLink className="nav-item nav-link font-weight-bold" to="/login">
-              Entrar
-            </NavLink>
-            
-          ) : null} */}
+          {/* <NavLink className="nav-item nav-link font-weight-bold" to="/about">
+            <i className="fa fa-question-circle-o" aria-hidden="true" /> {ABOUT}
+          </NavLink> */}
+
+          {/* if user is authenticated, show logout option, else show login option */}
           {isLoggedIn() ? (
             <NavLink
               className="nav-item nav-link font-weight-bold text-dark"
@@ -160,6 +161,7 @@ const NavBar = ({currentUser, cart}) => {
             </NavLink>
           )}
 
+          {/* if user is not authenticated, show the register option */}
           {!isLoggedIn() ? (
             <NavLink
               className="nav-item nav-link font-weight-bold text-dark"
@@ -169,16 +171,13 @@ const NavBar = ({currentUser, cart}) => {
             </NavLink>
           ) : null}
 
-          {/* <NavLink className="nav-item nav-link font-weight-bold" to="/about">
-            <i className="fa fa-question-circle-o" aria-hidden="true" /> {ABOUT}
-          </NavLink> */}
-          
         </div>
       </div>
     </nav>
   );
 };
 
+// map redux store state to this.props
 const mapStateToProps = (state) => ({
   currentUser: state.auth.currentUser,
   cart: state.entities.cart
@@ -188,4 +187,5 @@ const mapStateToProps = (state) => ({
 //   getCurrentUser: () => dispatch(getCurrentUser()),
 // });
 
+// wrap component with react-redux connect wrapper
 export default connect(mapStateToProps)(NavBar);

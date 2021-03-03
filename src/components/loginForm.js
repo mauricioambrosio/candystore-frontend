@@ -13,6 +13,7 @@ const PASSWORD = "Password";
 const IS_EMPLOYEE = "Employee?"
 const LOGIN = "Login";
 
+// login form uses the login function from the redux store
 class LoginForm extends Form {
   state = {
     data: { email: "", password: "", isEmployee: false },
@@ -29,6 +30,7 @@ class LoginForm extends Form {
     try {
       const { data } = this.state;
       
+      // call login redux dispatch action
       await this.props.login({
         email: data.email,
         password: data.password,
@@ -36,6 +38,8 @@ class LoginForm extends Form {
       });
 
       const { state } = this.props.location;
+
+      // go to home page after successful login 
       window.location = state ? state.from.pathname : "/";
 
       
@@ -56,6 +60,8 @@ class LoginForm extends Form {
       <div className="d-flex justify-content-center">
         <div className="p-4 rounded shadow" style={{marginTop: 90}}>
           <h1>{LOGIN}</h1>
+
+          {/* render inputs and button */}
           <form onSubmit={this.handleSubmit}>
             {this.renderInput("email", EMAIL, false)}
             {this.renderInput("password", PASSWORD, false, "password")}
@@ -69,13 +75,14 @@ class LoginForm extends Form {
   }
 }
 
+// map redux store state to this.props
 const mapStateToProps = (state) => ({
-  // currentUser: state.auth.currentUser,
-  // token: state.auth.token,
 });
 
+// map redux store dispatch functions to this.props
 const mapDispatchToProps = (dispatch) => ({
   login: ({ email, password, isEmployee }) => dispatch(login({ email, password, isEmployee })),
 });
 
+// wrap component with react-redux connect wrapper
 export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);

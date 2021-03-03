@@ -1,9 +1,10 @@
-import axios from "axios";
 import http from "../services/http";
 import * as actions from "../api";
 
-
+// api middleware for redux store to interact with databases 
 const api = ({ dispatch }) => (next) => async (action) => {
+
+  // if action is not apiCallBegan, go straight to next function on chain
   if (action.type !== actions.apiCallBegan.type) return next(action);
 
   const {
@@ -17,9 +18,13 @@ const api = ({ dispatch }) => (next) => async (action) => {
     onError,
   } = action.payload;
 
+  // dispatch onStart action
   if (onStart) dispatch({ type: onStart });
-
+  
+  // call next function on chain
   next(action);
+
+  // execute http request
   try {
     const response = await http.request({
       url,
@@ -28,16 +33,16 @@ const api = ({ dispatch }) => (next) => async (action) => {
       // headers: {...headers, "Access-Control-Allow-Origin": "*"},
     });
 
+    // console.log("response:", response.data);
 
-    console.log("response:", response.data);
-
-    // General
+    // dispatch general success action
     dispatch(
       actions.apiCallSuccess(
         responseHeader ? response.headers[responseHeader] : response.data
       )
     );
-    // Specific
+
+    // dispatch specific success action
     if (onSuccess)
       dispatch({
         type: onSuccess,
@@ -46,9 +51,9 @@ const api = ({ dispatch }) => (next) => async (action) => {
           : response.data,
       });
   } catch (error) {
-    // General
+    // dispatch general fail action
     dispatch(actions.apiCallFailed(error.message));
-    // Specific
+    // dispatch specific fail action
     if (onError) dispatch({ type: onError, payload: error.message });
     throw error;
   }

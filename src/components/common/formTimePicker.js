@@ -16,6 +16,8 @@ const FormTimePicker = ({ name, label, error, value, ...rest }) => {
         value={moment(value, TIME_FORMAT)}
         showNow={false}
       />
+      
+      {/* show validate error message */}
       {error && <div className="alert alert-danger">{error}</div>}
     </div>
   );

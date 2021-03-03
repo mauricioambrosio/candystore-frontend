@@ -23,6 +23,7 @@ const GENDER = "Gender";
 const PHONE_NUMBER = "Phone number";
 const ADDRESS = "Address";
 
+// the dispatch functions call respective redux dispatch actions
 class ProfileForm extends Form {
   state = {
     edit: false,
@@ -39,8 +40,8 @@ class ProfileForm extends Form {
     errors: {},
   };
 
+  // populate input fields with current user data
   populateCurrentUser(currentUser) {
-    
     const data = { ...this.state.data };
     if (currentUser.firstname) data.firstname = currentUser.firstname;
     if (currentUser.lastname) data.lastname = currentUser.lastname;
@@ -58,22 +59,22 @@ class ProfileForm extends Form {
   async componentDidMount() {
     window.scrollTo(0, 0);
     try {
+      // call dispatch action function to get current user data
       await this.props.getCurrentUser();
 
       const currentUser = this.props.currentUser;
 
+      // populate input fields with current user data
       const data = this.populateCurrentUser(currentUser);
 
-      let edit = false;
-      if (this.props.location.state && this.props.location.state.newUser)
-        edit = true;
-      this.setState({ data, currentUser, edit });
+      this.setState({ data, currentUser });
     } catch (err) {
       console.log(err);
       return (window.location = "/");
     }
   }
 
+  // form fields schema
   schema = {
     firstname: Joi.string().min(1).max(64).required().label(FIRST_NAME),
     lastname: Joi.string().min(1).max(64).required().label(LAST_NAME),
@@ -86,80 +87,56 @@ class ProfileForm extends Form {
     address: Joi.string().max(256).allow(null, "").label(ADDRESS),
   };
 
+
   doSubmit = async () => {
+    // disable edit
     this.setState({ edit: false });
     const data = { ...this.state.data };
     try {
-
-      this.setState({edit: false});
+      // call dispatch action function to update current user
       await this.props.updateCurrentUser(data);
 
       const updatedUser = this.props.currentUser;
       this.setState({ currentUser: updatedUser });
-      if (this.props.location.state && this.props.location.state.newUser)
-        return this.props.history.replace({
-          pathname: "/home",
-          state: { newUser: true },
-        });
+
     } catch (err) {
       console.log(err.message);
     }
   };
 
+
   render() {
+    // if user is not logged in go back to home page
     if (!isLoggedIn()) return (window.location = "/");
 
     const { edit, currentUser } = this.state;
-    let newUser;
-    if (this.props.location.state && this.props.location.state.newUser)
-      newUser = true;
-    else newUser = false;
-
+   
     return (
       <div className="d-flex justify-content-center">
         <div className="w-100 mb-4 p-4 rounded shadow" style={{maxWidth: 500}}>
           <h3 className="text-center">{PROFILE}</h3>
-          <p>
-            {currentUser.userName ? (
-              <>
-                <i className="fa fa-user" aria-hidden="true" />
-                <span> </span>
-                {currentUser.userName}
-              </>
-            ) : null}
-            {/* 
-            {currentUser.userName ? (
-              <>
-                <i className="fa fa-user" aria-hidden="true" />
-                {currentUser.userName}
-              </>
-            ) : null} */}
-          </p>
-
-          {!newUser ? (
-            <>
-              <label htmlFor="edit">{EDIT}</label>
-              <span> </span>
-              <Switch
-                name="edit"
-                checked={this.state.edit}
-                onChange={(checked, event) => {
-                  const newState = { ...this.state };
-                  newState.data = { ...this.state.data };
-                  newState.edit = checked;
-
-                  if (!checked) {
-                    const data = this.populateCurrentUser(currentUser);
-                    newState.data = data;
-                  }
-                  this.setState(newState);
-                }}
-              />
-            </>
-          ) : null}
-
+          
+          
           <form onSubmit={this.handleSubmit}>
-            {/* {this.renderInput("userName", USERNAME, !edit)} */}
+            <label htmlFor="edit">{EDIT}</label>
+            {" "}
+
+            {/* switch to define if edit is available */}
+            <Switch
+              name="edit"
+              checked={this.state.edit}
+              onChange={(checked, event) => {
+                const newState = { ...this.state };
+                newState.data = { ...this.state.data };
+                newState.edit = checked;
+
+                if (!checked) {
+                  const data = this.populateCurrentUser(currentUser);
+                  newState.data = data;
+                }
+                this.setState(newState);
+              }}
+            />
             {this.renderInput("firstname", FIRST_NAME, !edit)}
             {this.renderInput("lastname", LAST_NAME, !edit)}
             {isEmployee()? this.renderInput("ssn", SOCIAL_SECURITY_NUMBER, !edit) : null}
@@ -180,21 +157,6 @@ class ProfileForm extends Form {
 
             {this.renderButton(SAVE, !edit)}
 
-            {newUser ? (
-              <button
-                className="btn btn-primary"
-                style={{ marginBottom: 20, marginLeft: 20 }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  this.props.history.replace({
-                    pathname: "/home",
-                    state: { newUser: true },
-                  });
-                }}
-              >
-                Setup profile later
-              </button>
-            ) : null}
           </form>
         </div>
       </div>
@@ -202,13 +164,16 @@ class ProfileForm extends Form {
   }
 }
 
+// map redux store state to this.props
 const mapStateToProps = (state) => ({
   currentUser: state.auth.currentUser,
 });
 
+// map redux store dispatch functions to this.props
 const mapDispatchToProps = (dispatch) => ({
   getCurrentUser: () => dispatch(getCurrentUser()),
   updateCurrentUser: (data) => dispatch(updateCurrentUser(data)),
 });
 
+// wrap component with react-redux connect wrapper
 export default connect(mapStateToProps, mapDispatchToProps)(ProfileForm);
