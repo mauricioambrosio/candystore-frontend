@@ -52,16 +52,18 @@ class InventoryForm extends Component {
                         Add
                     </button>:null}
 
+
                     {/* if no item is selected (id field is empty), do not show update button  */}
-                    {value[idField]?<button className="btn btn-primary mb-2 mr-2" 
+                    {value[idField]!==""?<button className="btn btn-primary mb-2 mr-2" 
                         onClick = {async ()=>{
                             await this.props.edit(value);
                         }}>
                         Update
                     </button>:null}
 
+
                     {/* if no item is selected (id field is empty), do not show remove button  */}
-                    {value[idField]?<button className="btn btn-danger mb-2 mr-2" 
+                    {value[idField]!=="" && value[idField]!==0?<button className="btn btn-danger mb-2 mr-2" 
                         onClick = {async ()=>{
                             await this.props.delete(value);
                             this.props.handleClear(entity, idField);
