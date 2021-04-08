@@ -44,12 +44,17 @@ class Stats extends Component {
         let orderStatsMonth = [['Date', 'Count']];
         if (this.props.stats && this.props.stats.orders_month) 
             orderStatsMonth = [...orderStatsMonth, ...this.props.stats.orders_month.map(order => ([order.date, order.count]))];  
-        
+
+        // add dummy data if empty
+        if (orderStatsMonth.length === 1) orderStatsMonth = [...orderStatsMonth, [(new Date()).toString(), 0]]
+
         // prepare data for line chart of monthly number of orders of last year
         let orderStatsYear = [['Date', 'Count']];
         if (this.props.stats && this.props.stats.orders_year) 
             orderStatsYear = [...orderStatsYear, ...this.props.stats.orders_year.map(order => ([order.date, order.count]))];  
 
+        // add dummy data if empty
+        if (orderStatsYear.length === 1) orderStatsYear = [...orderStatsYear, [(new Date()).toString(), 0]]
         
         return ( 
             <Container className="w-100">
